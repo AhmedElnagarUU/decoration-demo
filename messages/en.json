@@ -1,0 +1,117 @@
+{
+  "nav": {
+    "furniture": "Furniture",
+    "lighting": "Lighting",
+    "decor": "Decor",
+    "workspace": "Workspace",
+    "blog": "Blog",
+    "about": "About",
+    "work": "Our Work",
+    "services": "Services",
+    "contact": "Contact",
+    "login": "Login",
+    "register": "Register"
+  },
+  "hero": {
+    "title": "Elevate Your Home with Modern Furniture & Decor",
+    "subtitle": "Discover curated pieces that transform your living spaces into sanctuaries of style and comfort.",
+    "cta": "Explore Our Collection"
+  },
+  "categories": {
+    "livingRoom": {
+      "title": "Living Room",
+      "description": "Create inviting spaces with thoughtfully designed furniture and warm accents."
+    },
+    "lighting": {
+      "title": "Lighting",
+      "description": "Illuminate your home with elegant fixtures that blend form and function."
+    },
+    "workspace": {
+      "title": "Workspace",
+      "description": "Productive environments designed for focus, creativity, and comfort."
+    }
+  },
+  "showcase": {
+    "title": "Contemporary Furniture & Home Decor",
+    "description": "Our collection brings together timeless craftsmanship and modern aesthetics. Each piece is selected to harmonize with your lifestyle and elevate everyday living.",
+    "cta": "Browse All Products"
+  },
+  "about": {
+    "title": "About Elara",
+    "description": "At Elara, we believe that great design should be accessible and personal. Our team of interior specialists curates furniture and decor that reflects your unique taste while maintaining the highest standards of quality and sustainability.",
+    "recentArticles": "Recent Articles",
+    "article1": "Design Trends 2024",
+    "article2": "Workspace Inspiration"
+  },
+  "home": {
+    "ourWork": "Our Work",
+    "ourWorkSubtitle": "Explore our latest interior design projects",
+    "viewAll": "View All Projects",
+    "services": "Our Services",
+    "servicesSubtitle": "Comprehensive design solutions for every space",
+    "whyUs": "Why Choose Us",
+    "stats": {
+      "projects": "Projects Completed",
+      "years": "Years of Experience",
+      "clients": "Happy Clients"
+    },
+    "testimonials": "What Our Clients Say",
+    "ctaTitle": "Ready to Transform Your Space?",
+    "ctaSubtitle": "Let us help you create the home of your dreams.",
+    "ctaButton": "Get in Touch"
+  },
+  "services": {
+    "title": "Our Services",
+    "subtitle": "Tailored interior design solutions for every room and style",
+    "interiorDesign": "Interior Design",
+    "furniture": "Furniture Selection",
+    "lighting": "Lighting Design",
+    "consultation": "Design Consultation"
+  },
+  "work": {
+    "title": "Our Portfolio",
+    "subtitle": "A curated collection of our finest interior design projects",
+    "filterAll": "All",
+    "viewProject": "View Project",
+    "relatedProjects": "Related Projects",
+    "location": "Location",
+    "year": "Year",
+    "area": "Area",
+    "category": "Category"
+  },
+  "aboutPage": {
+    "title": "About Us",
+    "story": "Our Story",
+    "storyText": "Founded with a passion for beautiful living spaces, Elara has grown into a trusted name in interior design and home decoration across the region.",
+    "team": "Our Team",
+    "timeline": "Our Journey",
+    "values": "Our Values",
+    "value1": "Quality Craftsmanship",
+    "value2": "Sustainable Design",
+    "value3": "Client-Centered Approach"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We'd love to hear about your project",
+    "name": "Full Name",
+    "email": "Email Address",
+    "phone": "Phone Number",
+    "message": "Your Message",
+    "submit": "Send Message",
+    "success": "Thank you! We'll be in touch soon.",
+    "address": "Address",
+    "phoneLabel": "Phone",
+    "emailLabel": "Email"
+  },
+  "footer": {
+    "tagline": "Elevating homes with modern design",
+    "quickLinks": "Quick Links",
+    "followUs": "Follow Us",
+    "rights": "All rights reserved."
+  },
+  "common": {
+    "readMore": "Read More",
+    "loading": "Loading...",
+    "error": "Something went wrong"
+  }
+}
