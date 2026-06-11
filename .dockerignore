@@ -1,0 +1,29 @@
+# Dependencies
+node_modules
+npm-debug.log*
+
+# Next.js
+.next
+out
+
+# Git
+.git
+.gitignore
+
+# IDE / editor
+.cursor
+.vscode
+.idea
+
+# Env files (inject at runtime instead)
+.env
+.env.*
+
+# Testing / coverage
+coverage
+
+# Misc
+README.md
+Dockerfile
+.dockerignore
+docker-compose*.yml
