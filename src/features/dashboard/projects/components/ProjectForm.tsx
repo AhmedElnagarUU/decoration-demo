@@ -151,7 +151,11 @@ export function ProjectForm({ project }: ProjectFormProps) {
     "w-full border border-border px-4 py-2.5 text-sm focus:border-accent focus:outline-none";
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-2xl space-y-6"
+      data-tour="tour-project-form"
+    >
       {error && (
         <div className="rounded bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
       )}

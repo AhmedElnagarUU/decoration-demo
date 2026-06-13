@@ -35,11 +35,13 @@ export default function SecurityPage() {
         </div>
       </div>
 
-      <PhoneSecurityCard
-        phoneNumber={session?.user.phoneNumber}
-        phoneNumberVerified={session?.user.phoneNumberVerified}
-        onUpdated={() => refetch()}
-      />
+      <div data-tour="tour-phone-security">
+        <PhoneSecurityCard
+          phoneNumber={session?.user.phoneNumber}
+          phoneNumberVerified={session?.user.phoneNumberVerified}
+          onUpdated={() => refetch()}
+        />
+      </div>
     </div>
   );
 }

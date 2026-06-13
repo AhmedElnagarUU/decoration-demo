@@ -18,7 +18,10 @@ const COLORS = ["#8b6d4d", "#a08968", "#b8a384", "#d0c4a0", "#e8dcc0"];
 export function AnalyticsDashboard({ summary }: { summary: AnalyticsSummary }) {
   return (
     <div className="space-y-6 sm:space-y-8">
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+      <div
+        className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
+        data-tour="tour-analytics-stats"
+      >
         <div className="rounded-sm bg-card p-4 shadow-sm sm:p-6">
           <p className="text-xs text-muted sm:text-sm">Total Page Views</p>
           <p className="mt-1 text-2xl font-medium sm:mt-2 sm:text-3xl">
@@ -39,7 +42,7 @@ export function AnalyticsDashboard({ summary }: { summary: AnalyticsSummary }) {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+      <div className="grid gap-6 lg:grid-cols-2 lg:gap-8" data-tour="tour-analytics-charts">
         <div className="rounded-sm bg-card p-4 shadow-sm sm:p-6">
           <h2 className="mb-4 font-medium">Page Views</h2>
           {summary.pageViews.length > 0 ? (

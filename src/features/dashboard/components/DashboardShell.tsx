@@ -3,10 +3,15 @@
 import { SITE_NAME } from "@/lib/constants";
 import { IS_PHONE_OTP_AVAILABLE } from "@/lib/config";
 import { signOut } from "@/lib/auth/auth-client";
+import {
+  DashboardTourButton,
+  useDashboardTour,
+} from "@/features/dashboard/tour/DashboardTour";
 import { LogoMark } from "@/shared/components/LogoMark";
 import {
   BarChart3,
   FolderKanban,
+  HelpCircle,
   LayoutDashboard,
   LogOut,
   Megaphone,
@@ -73,6 +78,7 @@ function NavLink({
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { startTour } = useDashboardTour();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   async function handleSignOut() {
@@ -91,14 +97,24 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             {SITE_NAME}
           </span>
         </div>
-        <button
-          type="button"
-          onClick={() => setDrawerOpen(true)}
-          className="rounded p-2 text-muted hover:bg-background hover:text-foreground"
-          aria-label="Open menu"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={startTour}
+            className="rounded p-2 text-muted hover:bg-background hover:text-foreground"
+            aria-label="Open dashboard guide"
+          >
+            <HelpCircle className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setDrawerOpen(true)}
+            className="rounded p-2 text-muted hover:bg-background hover:text-foreground"
+            aria-label="Open menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        </div>
       </header>
 
       {/* Mobile drawer overlay */}
@@ -127,7 +143,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <nav className="flex-1 space-y-1 p-3">
+            <nav className="flex-1 space-y-1 p-3" data-tour="tour-nav-sidebar">
               {links.map((link) => (
                 <NavLink
                   key={link.href}
@@ -137,7 +153,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 />
               ))}
             </nav>
-            <div className="border-t border-border p-3">
+            <div className="space-y-1 border-t border-border p-3">
+              <DashboardTourButton />
               <button
                 type="button"
                 onClick={handleSignOut}
@@ -160,12 +177,13 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               {SITE_NAME}
             </span>
           </div>
-          <nav className="flex-1 space-y-1 p-4">
+          <nav className="flex-1 space-y-1 p-4" data-tour="tour-nav-sidebar">
             {links.map((link) => (
               <NavLink key={link.href} {...link} pathname={pathname} />
             ))}
           </nav>
-          <div className="border-t border-border p-4">
+          <div className="space-y-1 border-t border-border p-4">
+            <DashboardTourButton />
             <button
               type="button"
               onClick={handleSignOut}
@@ -183,7 +201,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="fixed right-0 bottom-0 left-0 z-40 border-t border-border bg-card lg:hidden">
+      <nav
+        className="fixed right-0 bottom-0 left-0 z-40 border-t border-border bg-card lg:hidden"
+        data-tour="tour-nav-mobile"
+      >
         <div
           className={`grid ${links.length > 4 ? "grid-cols-5" : "grid-cols-4"}`}
         >

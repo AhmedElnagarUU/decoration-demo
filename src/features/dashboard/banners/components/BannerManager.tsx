@@ -75,6 +75,7 @@ export function BannerManager({ initialBanners }: { initialBanners: Banner[] }) 
       <div className="mb-4 flex justify-stretch sm:mb-6 sm:justify-end">
         <button
           onClick={() => setShowForm(!showForm)}
+          data-tour="tour-add-banner"
           className="w-full bg-accent px-4 py-2.5 text-sm text-white sm:w-auto sm:py-2"
         >
           {showForm ? "Cancel" : "Add Banner"}
@@ -137,7 +138,7 @@ export function BannerManager({ initialBanners }: { initialBanners: Banner[] }) 
       )}
 
       {/* Mobile cards */}
-      <div className="space-y-3 md:hidden">
+      <div className="space-y-3 md:hidden" data-tour="tour-banners-list">
         {banners.map((banner) => (
           <div
             key={banner.id}
@@ -175,7 +176,10 @@ export function BannerManager({ initialBanners }: { initialBanners: Banner[] }) 
       </div>
 
       {/* Desktop table */}
-      <div className="hidden overflow-hidden rounded-sm bg-card shadow-sm md:block">
+      <div
+        className="hidden overflow-hidden rounded-sm bg-card shadow-sm md:block"
+        data-tour="tour-banners-list"
+      >
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-left text-muted">
