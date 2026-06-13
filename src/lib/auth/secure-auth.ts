@@ -17,7 +17,14 @@ export function validateAuthRequest(
 }
 
 export function sanitizePublicSession(session: {
-  user: { id: string; email: string; name: string; createdAt: string };
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    createdAt: string;
+    phoneNumber?: string | null;
+    phoneNumberVerified?: boolean;
+  };
   expiresAt: string;
 }) {
   return {
