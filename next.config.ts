@@ -5,6 +5,9 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  env: {
+    NEXT_PUBLIC_OTP_STRATEGY: process.env.OTP_STRATEGY ?? "sms",
+  },
   images: {
     remotePatterns: [
       {
