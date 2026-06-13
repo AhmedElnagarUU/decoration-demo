@@ -7,6 +7,7 @@ import {
   DashboardTourButton,
   useDashboardTour,
 } from "@/features/dashboard/tour/DashboardTour";
+import { ConnectionStatusIndicator } from "@/features/dashboard/components/ConnectionStatusIndicator";
 import { LogoMark } from "@/shared/components/LogoMark";
 import {
   BarChart3,
@@ -98,6 +99,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           </span>
         </div>
         <div className="flex items-center gap-1">
+          <ConnectionStatusIndicator compact />
           <button
             type="button"
             onClick={startTour}
@@ -154,6 +156,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               ))}
             </nav>
             <div className="space-y-1 border-t border-border p-3">
+              <ConnectionStatusIndicator />
               <DashboardTourButton />
               <button
                 type="button"
@@ -183,6 +186,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             ))}
           </nav>
           <div className="space-y-1 border-t border-border p-4">
+            <ConnectionStatusIndicator />
             <DashboardTourButton />
             <button
               type="button"
