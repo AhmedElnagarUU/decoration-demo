@@ -1,11 +1,11 @@
-import { ENABLE_PHONE_OTP } from "@/lib/config";
+import { ENABLE_PHONE_OTP, OTP_STRATEGY } from "@/lib/config";
 import { SITE_NAME } from "@/lib/constants";
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { phoneNumber } from "better-auth/plugins";
 import { MongoClient } from "mongodb";
+import { sendOtp } from "./otp-delivery";
 import { isValidPhoneNumber } from "./phone";
-import { sendSmsOtp } from "./sms";
 
 function createAuth() {
   const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/revylo";
@@ -23,7 +23,7 @@ function createAuth() {
         allowedAttempts: 3,
         phoneNumberValidator: isValidPhoneNumber,
         sendOTP: ({ phoneNumber: phone, code }) => {
-          sendSmsOtp(phone, code);
+          sendOtp(phone, code, OTP_STRATEGY);
         },
         signUpOnVerification: {
           getTempEmail: (phone) => {

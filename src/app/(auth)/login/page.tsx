@@ -1,7 +1,7 @@
 "use client";
 
 import { PhoneOtpForm } from "@/features/auth/components/PhoneOtpForm";
-import { IS_PHONE_OTP_AVAILABLE } from "@/lib/config";
+import { CLIENT_OTP_STRATEGY, IS_PHONE_OTP_AVAILABLE, getOtpDeliveryLabel } from "@/lib/config";
 import { SITE_NAME } from "@/lib/constants";
 import { fetchCsrfToken, signIn } from "@/lib/auth/auth-client";
 import { LogoMark } from "@/shared/components/LogoMark";
@@ -108,7 +108,8 @@ export default function LoginPage() {
               {loginMethod === "phone" && (
                 <p className="mt-3 flex items-center gap-2 text-xs text-muted">
                   <Shield className="h-3.5 w-3.5 shrink-0 text-accent" />
-                  Passwordless sign-in with a one-time code sent to your phone.
+                  Passwordless sign-in with a one-time code via{" "}
+                  {getOtpDeliveryLabel(CLIENT_OTP_STRATEGY)}.
                 </p>
               )}
             </div>
