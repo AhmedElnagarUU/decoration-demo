@@ -17,27 +17,33 @@ const COLORS = ["#8b6d4d", "#a08968", "#b8a384", "#d0c4a0", "#e8dcc0"];
 
 export function AnalyticsDashboard({ summary }: { summary: AnalyticsSummary }) {
   return (
-    <div className="space-y-8">
-      <div className="grid gap-4 sm:grid-cols-4">
-        <div className="rounded-sm bg-card p-6 shadow-sm">
-          <p className="text-sm text-muted">Total Page Views</p>
-          <p className="mt-2 text-3xl font-medium">{summary.totalPageViews}</p>
+    <div className="space-y-6 sm:space-y-8">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <div className="rounded-sm bg-card p-4 shadow-sm sm:p-6">
+          <p className="text-xs text-muted sm:text-sm">Total Page Views</p>
+          <p className="mt-1 text-2xl font-medium sm:mt-2 sm:text-3xl">
+            {summary.totalPageViews}
+          </p>
         </div>
-        <div className="rounded-sm bg-card p-6 shadow-sm">
-          <p className="text-sm text-muted">Top Country</p>
-          <p className="mt-2 text-3xl font-medium">{summary.topCountry}</p>
+        <div className="rounded-sm bg-card p-4 shadow-sm sm:p-6">
+          <p className="text-xs text-muted sm:text-sm">Top Country</p>
+          <p className="mt-1 truncate text-2xl font-medium sm:mt-2 sm:text-3xl">
+            {summary.topCountry}
+          </p>
         </div>
-        <div className="rounded-sm bg-card p-6 shadow-sm sm:col-span-2">
-          <p className="text-sm text-muted">Most Visited Page</p>
-          <p className="mt-2 text-xl font-medium">{summary.mostVisitedPage}</p>
+        <div className="col-span-2 rounded-sm bg-card p-4 shadow-sm sm:p-6">
+          <p className="text-xs text-muted sm:text-sm">Most Visited Page</p>
+          <p className="mt-1 truncate text-lg font-medium sm:mt-2 sm:text-xl">
+            {summary.mostVisitedPage}
+          </p>
         </div>
       </div>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <div className="rounded-sm bg-card p-6 shadow-sm">
+      <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+        <div className="rounded-sm bg-card p-4 shadow-sm sm:p-6">
           <h2 className="mb-4 font-medium">Page Views</h2>
           {summary.pageViews.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={240}>
               <BarChart data={summary.pageViews.slice(0, 10)}>
                 <XAxis dataKey="page" tick={{ fontSize: 11 }} />
                 <YAxis />
@@ -50,10 +56,10 @@ export function AnalyticsDashboard({ summary }: { summary: AnalyticsSummary }) {
           )}
         </div>
 
-        <div className="rounded-sm bg-card p-6 shadow-sm">
+        <div className="rounded-sm bg-card p-4 shadow-sm sm:p-6">
           <h2 className="mb-4 font-medium">Referrer Sources</h2>
           {summary.referrers.length > 0 ? (
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={240}>
               <PieChart>
                 <Pie
                   data={summary.referrers}
@@ -78,10 +84,31 @@ export function AnalyticsDashboard({ summary }: { summary: AnalyticsSummary }) {
       </div>
 
       <div className="rounded-sm bg-card shadow-sm">
-        <div className="border-b border-border px-6 py-4">
+        <div className="border-b border-border px-4 py-3 sm:px-6 sm:py-4">
           <h2 className="font-medium">Visitors by Country</h2>
         </div>
-        <table className="w-full text-sm">
+
+        <div className="divide-y divide-border md:hidden">
+          {summary.countries.length > 0 ? (
+            summary.countries.map((c) => (
+              <div
+                key={`${c.country}-${c.city}`}
+                className="flex items-center justify-between px-4 py-3"
+              >
+                <div>
+                  <p className="font-medium">{c.country}</p>
+                  <p className="text-sm text-muted">{c.city}</p>
+                </div>
+                <span className="text-sm font-medium">{c.count}</span>
+              </div>
+            ))
+          ) : (
+            <p className="px-4 py-8 text-center text-muted">No visitor data yet</p>
+          )}
+        </div>
+
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-left text-muted">
               <th className="px-6 py-3">Country</th>
@@ -107,6 +134,7 @@ export function AnalyticsDashboard({ summary }: { summary: AnalyticsSummary }) {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

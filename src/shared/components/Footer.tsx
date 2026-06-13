@@ -1,4 +1,5 @@
 import { SITE_NAME } from "@/lib/constants";
+import { LogoMark } from "@/shared/components/LogoMark";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 
@@ -12,7 +13,7 @@ export async function Footer() {
         <div className="grid gap-12 md:grid-cols-3">
           <div>
             <div className="mb-4 flex items-center gap-2">
-              <span className="inline-block h-4 w-4 border-2 border-foreground" />
+              <LogoMark className="h-4 w-4" />
               <span className="font-serif text-lg font-semibold tracking-[0.15em] uppercase">
                 {SITE_NAME}
               </span>

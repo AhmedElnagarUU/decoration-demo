@@ -1,7 +1,7 @@
 import { AnalyticsTracker } from "@/shared/components/AnalyticsTracker";
-import { AnnouncementBanner } from "@/shared/components/AnnouncementBanner";
 import { Footer } from "@/shared/components/Footer";
-import { Navbar } from "@/shared/components/Navbar";
+import { MainWithOffset } from "@/shared/components/MainWithOffset";
+import { SiteHeader } from "@/shared/components/SiteHeader";
 import { routing } from "@/i18n/routing";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
@@ -49,9 +49,8 @@ export default async function LocaleLayout({
     >
       <body className="min-h-full flex flex-col antialiased">
         <NextIntlClientProvider messages={messages}>
-          <AnnouncementBanner />
-          <Navbar />
-          <main className="flex-1">{children}</main>
+          <SiteHeader />
+          <MainWithOffset>{children}</MainWithOffset>
           <Footer />
           <AnalyticsTracker />
         </NextIntlClientProvider>

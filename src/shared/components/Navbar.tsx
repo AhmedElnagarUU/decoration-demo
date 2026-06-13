@@ -2,6 +2,7 @@
 
 import { SITE_NAME } from "@/lib/constants";
 import { LanguageSwitcher } from "@/shared/components/LanguageSwitcher";
+import { LogoMark } from "@/shared/components/LogoMark";
 import { cn } from "@/lib/utils/cn";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Menu, X } from "lucide-react";
@@ -45,19 +46,20 @@ export function Navbar() {
           : "0 1px 20px rgba(0,0,0,0.06)",
       }}
       transition={{ duration: 0.35, ease: "easeInOut" }}
+      dir="ltr"
       className={cn(
-        "top-0 z-50 w-full backdrop-blur-md",
-        isHome ? "fixed" : "sticky",
+        "w-full backdrop-blur-md",
         isTransparent ? "text-white" : "border-b border-border/50 text-foreground",
       )}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8 lg:py-5">
         <Link href={`/${locale}`} className="flex items-center gap-2.5">
-          <motion.span
-            animate={{ borderColor: isTransparent ? "#ffffff" : "#1a1a1a" }}
+          <motion.div
+            animate={{ color: isTransparent ? "#ffffff" : "#1a1a1a" }}
             transition={{ duration: 0.35 }}
-            className="inline-block h-5 w-5 border-2"
-          />
+          >
+            <LogoMark />
+          </motion.div>
           <span className="font-serif text-xl font-semibold tracking-[0.15em] uppercase">
             {SITE_NAME}
           </span>

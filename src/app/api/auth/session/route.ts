@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth/auth";
 import { demoAuth } from "@/lib/auth/demo";
+import { sanitizePublicSession } from "@/lib/auth/secure-auth";
 import { IS_DEMO } from "@/lib/config";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,9 +18,18 @@ export async function GET(request: NextRequest) {
       return response;
     }
 
-    return NextResponse.json({ session });
+    return NextResponse.json({ session: sanitizePublicSession(session) });
   }
 
   const session = await auth.api.getSession({ headers: request.headers });
-  return NextResponse.json({ session });
+  if (!session) {
+    return NextResponse.json({ session: null });
+  }
+
+  return NextResponse.json({
+    session: {
+      user: session.user,
+      expiresAt: session.session.expiresAt,
+    },
+  });
 }

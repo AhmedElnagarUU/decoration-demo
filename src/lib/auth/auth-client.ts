@@ -1,10 +1,5 @@
 "use client";
 
-import {
-  getClientSession,
-  syncSessionToClient,
-  syncUsersToClient,
-} from "@/lib/auth/demo-client";
 import type { AuthSession } from "@/lib/auth/types";
 import { createAuthClient } from "better-auth/react";
 import { useCallback, useEffect, useState } from "react";
@@ -15,27 +10,27 @@ const productionClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
 });
 
+interface AuthRequestOptions {
+  csrfToken: string;
+  website?: string;
+}
+
+export async function fetchCsrfToken(): Promise<string> {
+  const res = await fetch("/api/auth/csrf", { cache: "no-store" });
+  const data = await res.json();
+  return data.csrfToken as string;
+}
+
 export function useSession() {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
-    if (IS_DEMO) {
-      const local = getClientSession();
-      if (local) {
-        setSession(local);
-        setLoading(false);
-        return;
-      }
-    }
-
     try {
-      const res = await fetch("/api/auth/session");
+      const res = await fetch("/api/auth/session", { cache: "no-store" });
       const data = await res.json();
-      if (IS_DEMO && data.session) {
-        syncSessionToClient(data.session);
-        setSession(data.session);
-      } else if (!IS_DEMO && data.session) {
+
+      if (data.session?.user) {
         setSession({
           user: {
             id: data.session.user.id,
@@ -44,7 +39,7 @@ export function useSession() {
             createdAt: data.session.user.createdAt,
           },
           token: "",
-          expiresAt: data.session.session.expiresAt,
+          expiresAt: data.session.expiresAt,
         });
       } else {
         setSession(null);
@@ -63,39 +58,55 @@ export function useSession() {
   return { data: session, isPending: loading, refetch: refresh };
 }
 
-export async function signIn(email: string, password: string) {
+export async function signIn(
+  email: string,
+  password: string,
+  options: AuthRequestOptions,
+) {
   if (IS_DEMO) {
     const res = await fetch("/api/auth/login", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": options.csrfToken,
+      },
+      body: JSON.stringify({ email, password, website: options.website ?? "" }),
     });
     const data = await res.json();
     if (!res.ok) {
       return { error: { message: data.error ?? "Login failed" } };
     }
-    syncSessionToClient(data.session);
-    syncUsersToClient(data.users);
-    return { data: data.session };
+    return { data: data.user };
   }
 
   return productionClient.signIn.email({ email, password });
 }
 
-export async function signUp(email: string, password: string, name: string) {
+export async function signUp(
+  email: string,
+  password: string,
+  name: string,
+  options: AuthRequestOptions,
+) {
   if (IS_DEMO) {
     const res = await fetch("/api/auth/register", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, name }),
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": options.csrfToken,
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        name,
+        website: options.website ?? "",
+      }),
     });
     const data = await res.json();
     if (!res.ok) {
       return { error: { message: data.error ?? "Registration failed" } };
     }
-    syncSessionToClient(data.session);
-    syncUsersToClient(data.users);
-    return { data: data.session };
+    return { data: data.user };
   }
 
   return productionClient.signUp.email({ email, password, name });
@@ -103,7 +114,6 @@ export async function signUp(email: string, password: string, name: string) {
 
 export async function signOut() {
   if (IS_DEMO) {
-    syncSessionToClient(null);
     await fetch("/api/auth/logout", { method: "POST" });
     return;
   }

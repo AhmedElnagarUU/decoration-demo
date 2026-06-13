@@ -72,17 +72,17 @@ export function BannerManager({ initialBanners }: { initialBanners: Banner[] }) 
 
   return (
     <div>
-      <div className="mb-6 flex justify-end">
+      <div className="mb-4 flex justify-stretch sm:mb-6 sm:justify-end">
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-accent px-4 py-2 text-sm text-white"
+          className="w-full bg-accent px-4 py-2.5 text-sm text-white sm:w-auto sm:py-2"
         >
           {showForm ? "Cancel" : "Add Banner"}
         </button>
       </div>
 
       {showForm && (
-        <form onSubmit={handleCreate} className="mb-8 space-y-4 rounded-sm bg-card p-6 shadow-sm">
+        <form onSubmit={handleCreate} className="mb-6 space-y-4 rounded-sm bg-card p-4 shadow-sm sm:mb-8 sm:p-6">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label className="mb-1 block text-sm font-medium">Message (EN)</label>
@@ -136,7 +136,46 @@ export function BannerManager({ initialBanners }: { initialBanners: Banner[] }) 
         </form>
       )}
 
-      <div className="overflow-hidden rounded-sm bg-card shadow-sm">
+      {/* Mobile cards */}
+      <div className="space-y-3 md:hidden">
+        {banners.map((banner) => (
+          <div
+            key={banner.id}
+            className="rounded-sm border border-border bg-card p-4 shadow-sm"
+          >
+            <p className="font-medium">{banner.message.en}</p>
+            {banner.link && (
+              <p className="mt-1 truncate text-sm text-muted">{banner.link}</p>
+            )}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => toggleActive(banner.id, banner.active)}
+                className={`px-2 py-0.5 text-[10px] uppercase ${
+                  banner.active
+                    ? "bg-green-100 text-green-700"
+                    : "bg-gray-100 text-gray-500"
+                }`}
+              >
+                {banner.active ? "Active" : "Inactive"}
+              </button>
+              {banner.expiresAt && (
+                <span className="text-xs text-muted">
+                  Expires {new Date(banner.expiresAt).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+            <button
+              onClick={() => setDeleteId(banner.id)}
+              className="mt-3 text-sm text-red-500 hover:underline"
+            >
+              Delete
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden overflow-hidden rounded-sm bg-card shadow-sm md:block">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border text-left text-muted">

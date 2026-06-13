@@ -1,14 +1,9 @@
-import { Sidebar } from "@/features/dashboard/components/Sidebar";
+import { DashboardShell } from "@/features/dashboard/components/DashboardShell";
 
 export default function DashboardPanelLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <main className="flex-1 overflow-auto p-8">{children}</main>
-    </div>
-  );
+  return <DashboardShell>{children}</DashboardShell>;
 }

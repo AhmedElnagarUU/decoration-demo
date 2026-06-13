@@ -4,7 +4,7 @@ import { routing } from "./i18n/routing";
 
 const intlMiddleware = createMiddleware(routing);
 
-const DASHBOARD_PUBLIC = ["/dashboard/login", "/dashboard/register"];
+const AUTH_PUBLIC = ["/login", "/register"];
 
 function hasAuthSession(request: NextRequest): boolean {
   return !!(
@@ -16,17 +16,23 @@ function hasAuthSession(request: NextRequest): boolean {
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith("/dashboard")) {
-    const isPublic = DASHBOARD_PUBLIC.some((p) => pathname.startsWith(p));
+  const isAuthRoute = AUTH_PUBLIC.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
 
-    if (!isPublic && !hasAuthSession(request)) {
-      return NextResponse.redirect(new URL("/dashboard/login", request.url));
-    }
-
-    if (isPublic && hasAuthSession(request)) {
+  if (isAuthRoute) {
+    if (hasAuthSession(request)) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
+    return NextResponse.next();
+  }
 
+  if (pathname.startsWith("/dashboard")) {
+    if (!hasAuthSession(request)) {
+      const loginUrl = new URL("/login", request.url);
+      loginUrl.searchParams.set("from", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
     return NextResponse.next();
   }
 
