@@ -1,18 +1,42 @@
 "use client";
 
+import { IS_PHONE_OTP_AVAILABLE } from "@/lib/config";
 import type { AuthSession } from "@/lib/auth/types";
 import { createAuthClient } from "better-auth/react";
+import { phoneNumberClient } from "better-auth/client/plugins";
 import { useCallback, useEffect, useState } from "react";
 
 const IS_DEMO = process.env.NEXT_PUBLIC_APP_MODE === "demo";
 
 const productionClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  plugins: IS_PHONE_OTP_AVAILABLE ? [phoneNumberClient()] : [],
 });
 
 interface AuthRequestOptions {
   csrfToken: string;
   website?: string;
+}
+
+function mapSessionUser(user: {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: Date | string;
+  phoneNumber?: string | null;
+  phoneNumberVerified?: boolean;
+}) {
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.name,
+    createdAt:
+      typeof user.createdAt === "string"
+        ? user.createdAt
+        : user.createdAt.toISOString(),
+    phoneNumber: user.phoneNumber ?? undefined,
+    phoneNumberVerified: user.phoneNumberVerified,
+  };
 }
 
 export async function fetchCsrfToken(): Promise<string> {
@@ -32,12 +56,7 @@ export function useSession() {
 
       if (data.session?.user) {
         setSession({
-          user: {
-            id: data.session.user.id,
-            email: data.session.user.email,
-            name: data.session.user.name,
-            createdAt: data.session.user.createdAt,
-          },
+          user: mapSessionUser(data.session.user),
           token: "",
           expiresAt: data.session.expiresAt,
         });
@@ -119,4 +138,37 @@ export async function signOut() {
   }
 
   await productionClient.signOut();
+}
+
+export async function sendPhoneOtp(phoneNumber: string) {
+  if (!IS_PHONE_OTP_AVAILABLE) {
+    return { error: { message: "Phone OTP is not enabled" } };
+  }
+
+  return productionClient.phoneNumber.sendOtp({ phoneNumber });
+}
+
+export async function verifyPhoneOtp(
+  phoneNumber: string,
+  code: string,
+  options?: { updatePhoneNumber?: boolean; disableSession?: boolean },
+) {
+  if (!IS_PHONE_OTP_AVAILABLE) {
+    return { error: { message: "Phone OTP is not enabled" } };
+  }
+
+  return productionClient.phoneNumber.verify({
+    phoneNumber,
+    code,
+    updatePhoneNumber: options?.updatePhoneNumber ?? false,
+    disableSession: options?.disableSession ?? false,
+  });
+}
+
+export async function removePhoneNumber() {
+  if (!IS_PHONE_OTP_AVAILABLE) {
+    return { error: { message: "Phone OTP is not enabled" } };
+  }
+
+  return productionClient.updateUser({ phoneNumber: null });
 }

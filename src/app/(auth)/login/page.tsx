@@ -1,18 +1,23 @@
 "use client";
 
+import { PhoneOtpForm } from "@/features/auth/components/PhoneOtpForm";
+import { IS_PHONE_OTP_AVAILABLE } from "@/lib/config";
 import { SITE_NAME } from "@/lib/constants";
 import { fetchCsrfToken, signIn } from "@/lib/auth/auth-client";
 import { LogoMark } from "@/shared/components/LogoMark";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, Phone, Shield } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+type LoginMethod = "email" | "phone";
 
 export default function LoginPage() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loginMethod, setLoginMethod] = useState<LoginMethod>("email");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -44,6 +49,11 @@ export default function LoginPage() {
     }
   }
 
+  function handlePhoneSuccess() {
+    router.push("/dashboard");
+    router.refresh();
+  }
+
   return (
     <div className="flex min-h-screen flex-col justify-center px-4 py-8 sm:px-6">
       <div className="mx-auto w-full max-w-sm">
@@ -60,89 +70,135 @@ export default function LoginPage() {
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4 rounded-sm border border-border bg-card p-5 shadow-sm sm:p-8"
-        >
-          {error && (
-            <div
-              role="alert"
-              className="rounded bg-red-50 px-4 py-3 text-sm text-red-600"
-            >
-              {error}
+        <div className="rounded-sm border border-border bg-card p-5 shadow-sm sm:p-8">
+          {IS_PHONE_OTP_AVAILABLE && (
+            <div className="mb-6">
+              <div className="grid grid-cols-2 gap-1 rounded border border-border p-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginMethod("email");
+                    setError("");
+                  }}
+                  className={`flex items-center justify-center gap-2 rounded px-3 py-2 text-sm transition-colors ${
+                    loginMethod === "email"
+                      ? "bg-accent text-white"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  <Mail className="h-4 w-4" />
+                  Email
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoginMethod("phone");
+                    setError("");
+                  }}
+                  className={`flex items-center justify-center gap-2 rounded px-3 py-2 text-sm transition-colors ${
+                    loginMethod === "phone"
+                      ? "bg-accent text-white"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  <Phone className="h-4 w-4" />
+                  Phone OTP
+                </button>
+              </div>
+              {loginMethod === "phone" && (
+                <p className="mt-3 flex items-center gap-2 text-xs text-muted">
+                  <Shield className="h-3.5 w-3.5 shrink-0 text-accent" />
+                  Passwordless sign-in with a one-time code sent to your phone.
+                </p>
+              )}
             </div>
           )}
 
-          <input
-            type="text"
-            name="website"
-            tabIndex={-1}
-            autoComplete="off"
-            className="pointer-events-none absolute h-0 w-0 opacity-0"
-            aria-hidden="true"
-          />
+          {loginMethod === "phone" && IS_PHONE_OTP_AVAILABLE ? (
+            <PhoneOtpForm mode="sign-in" onSuccess={handlePhoneSuccess} />
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div
+                  role="alert"
+                  className="rounded bg-red-50 px-4 py-3 text-sm text-red-600"
+                >
+                  {error}
+                </div>
+              )}
 
-          <div>
-            <label htmlFor="email" className="mb-1.5 block text-sm font-medium">
-              Email
-            </label>
-            <div className="relative">
-              <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted" />
               <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                className="w-full border border-border py-2.5 pr-4 pl-10 text-sm focus:border-accent focus:outline-none"
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                className="pointer-events-none absolute h-0 w-0 opacity-0"
+                aria-hidden="true"
               />
-            </div>
-          </div>
 
-          <div>
-            <label htmlFor="password" className="mb-1.5 block text-sm font-medium">
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted" />
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                required
-                autoComplete="current-password"
-                className="w-full border border-border py-2.5 pr-10 pl-10 text-sm focus:border-accent focus:outline-none"
-              />
+              <div>
+                <label htmlFor="email" className="mb-1.5 block text-sm font-medium">
+                  Email
+                </label>
+                <div className="relative">
+                  <Mail className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted" />
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    autoComplete="email"
+                    className="w-full border border-border py-2.5 pr-4 pl-10 text-sm focus:border-accent focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="password" className="mb-1.5 block text-sm font-medium">
+                  Password
+                </label>
+                <div className="relative">
+                  <Lock className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted" />
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    autoComplete="current-password"
+                    className="w-full border border-border py-2.5 pr-10 pl-10 text-sm focus:border-accent focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className="absolute top-1/2 right-3 -translate-y-1/2 text-muted hover:text-foreground"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
               <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                className="absolute top-1/2 right-3 -translate-y-1/2 text-muted hover:text-foreground"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                type="submit"
+                disabled={loading}
+                className="w-full bg-accent py-3 text-sm font-medium tracking-wide text-white uppercase transition-colors hover:bg-accent-hover disabled:opacity-50"
               >
-                {showPassword ? (
-                  <EyeOff className="h-4 w-4" />
-                ) : (
-                  <Eye className="h-4 w-4" />
-                )}
+                {loading ? "Signing in..." : "Sign In"}
               </button>
-            </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-accent py-3 text-sm font-medium tracking-wide text-white uppercase transition-colors hover:bg-accent-hover disabled:opacity-50"
-          >
-            {loading ? "Signing in..." : "Sign In"}
-          </button>
-
-          <p className="text-center text-sm text-muted">
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-accent hover:underline">
-              Register
-            </Link>
-          </p>
-        </form>
+              <p className="text-center text-sm text-muted">
+                Don&apos;t have an account?{" "}
+                <Link href="/register" className="text-accent hover:underline">
+                  Register
+                </Link>
+              </p>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

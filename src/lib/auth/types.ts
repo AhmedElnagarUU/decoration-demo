@@ -3,6 +3,8 @@ export interface AuthUser {
   email: string;
   name: string;
   createdAt: string;
+  phoneNumber?: string | null;
+  phoneNumberVerified?: boolean;
 }
 
 export interface AuthSession {

@@ -1,6 +1,7 @@
 "use client";
 
 import { SITE_NAME } from "@/lib/constants";
+import { IS_PHONE_OTP_AVAILABLE } from "@/lib/config";
 import { signOut } from "@/lib/auth/auth-client";
 import { LogoMark } from "@/shared/components/LogoMark";
 import {
@@ -10,6 +11,7 @@ import {
   LogOut,
   Megaphone,
   Menu,
+  Shield,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -21,6 +23,9 @@ const links = [
   { href: "/dashboard/projects", label: "Projects", Icon: FolderKanban, short: "Projects" },
   { href: "/dashboard/banners", label: "Banners", Icon: Megaphone, short: "Banners" },
   { href: "/dashboard/analytics", label: "Analytics", Icon: BarChart3, short: "Stats" },
+  ...(IS_PHONE_OTP_AVAILABLE
+    ? [{ href: "/dashboard/security", label: "Security", Icon: Shield, short: "Security" }]
+    : []),
 ];
 
 function NavLink({
@@ -179,7 +184,9 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
       {/* Mobile bottom nav */}
       <nav className="fixed right-0 bottom-0 left-0 z-40 border-t border-border bg-card lg:hidden">
-        <div className="grid grid-cols-4">
+        <div
+          className={`grid ${links.length > 4 ? "grid-cols-5" : "grid-cols-4"}`}
+        >
           {links.map((link) => (
             <NavLink
               key={link.href}
