@@ -23,12 +23,14 @@ export default async function DashboardPage() {
         <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
           <Link
             href="/dashboard/projects/new"
+            data-tour="tour-add-project"
             className="bg-accent px-4 py-2.5 text-center text-sm text-white sm:py-2"
           >
             Add Project
           </Link>
           <Link
             href="/dashboard/banners"
+            data-tour="tour-manage-banners"
             className="border border-border px-4 py-2.5 text-center text-sm sm:py-2"
           >
             Manage Banners
@@ -36,7 +38,10 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:mb-8 sm:gap-4 lg:grid-cols-4">
+      <div
+        className="mb-6 grid grid-cols-2 gap-3 sm:mb-8 sm:gap-4 lg:grid-cols-4"
+        data-tour="tour-stats-panel"
+      >
         {stats.map((stat) => (
           <div key={stat.label} className="rounded-sm bg-card p-4 shadow-sm sm:p-6">
             <p className="text-xs text-muted sm:text-sm">{stat.label}</p>
@@ -47,7 +52,7 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="rounded-sm bg-card shadow-sm">
+      <div className="rounded-sm bg-card shadow-sm" data-tour="tour-recent-projects">
         <div className="border-b border-border px-4 py-3 sm:px-6 sm:py-4">
           <h2 className="font-medium">Recent Projects</h2>
         </div>

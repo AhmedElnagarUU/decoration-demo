@@ -12,6 +12,7 @@ export default async function ProjectsPage() {
         <h1 className="text-xl font-medium sm:text-2xl">Projects</h1>
         <Link
           href="/dashboard/projects/new"
+          data-tour="tour-add-project"
           className="bg-accent px-4 py-2.5 text-center text-sm text-white sm:py-2"
         >
           Add New Project
@@ -19,7 +20,7 @@ export default async function ProjectsPage() {
       </div>
 
       {/* Mobile cards */}
-      <div className="space-y-3 md:hidden">
+      <div className="space-y-3 md:hidden" data-tour="tour-projects-list">
         {projects.map((project) => (
           <div
             key={project.id}
@@ -68,7 +69,10 @@ export default async function ProjectsPage() {
       </div>
 
       {/* Desktop table */}
-      <div className="hidden overflow-hidden rounded-sm bg-card shadow-sm md:block">
+      <div
+        className="hidden overflow-hidden rounded-sm bg-card shadow-sm md:block"
+        data-tour="tour-projects-list"
+      >
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
