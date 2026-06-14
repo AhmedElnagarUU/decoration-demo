@@ -84,3 +84,38 @@ export interface AnalyticsSummary {
   referrers: { source: string; count: number }[];
   mostVisitedPage: string;
 }
+
+export type PixelPlatform =
+  | "meta"
+  | "google_ga4"
+  | "google_ads"
+  | "tiktok"
+  | "snapchat"
+  | "gtm";
+
+export interface Pixel {
+  id: string;
+  platform: PixelPlatform;
+  label: string;
+  pixelId: string;
+  enabled: boolean;
+  accessToken?: string;
+  testEventCode?: string;
+}
+
+/** Pixel data safe for client-side injection (no secrets). */
+export type PublicPixel = Pick<
+  Pixel,
+  "id" | "platform" | "label" | "pixelId" | "enabled"
+>;
+
+export interface CreatePixelInput {
+  platform: PixelPlatform;
+  label: string;
+  pixelId: string;
+  enabled: boolean;
+  accessToken?: string;
+  testEventCode?: string;
+}
+
+export interface UpdatePixelInput extends Partial<CreatePixelInput> {}

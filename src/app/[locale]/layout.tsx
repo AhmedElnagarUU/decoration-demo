@@ -1,6 +1,9 @@
+import { IS_PRODUCTION } from "@/lib/config";
+import { pixels } from "@/lib/pixels/service";
 import { AnalyticsTracker } from "@/shared/components/AnalyticsTracker";
 import { Footer } from "@/shared/components/Footer";
 import { MainWithOffset } from "@/shared/components/MainWithOffset";
+import { PixelInjector } from "@/shared/components/PixelInjector";
 import { SiteHeader } from "@/shared/components/SiteHeader";
 import { routing } from "@/i18n/routing";
 import { NextIntlClientProvider } from "next-intl";
@@ -40,6 +43,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
   const dir = locale === "ar" ? "rtl" : "ltr";
+  const enabledPixels = IS_PRODUCTION ? await pixels.getEnabledPixels() : [];
 
   return (
     <html
@@ -53,6 +57,7 @@ export default async function LocaleLayout({
           <MainWithOffset>{children}</MainWithOffset>
           <Footer />
           <AnalyticsTracker />
+          {enabledPixels.length > 0 && <PixelInjector pixels={enabledPixels} />}
         </NextIntlClientProvider>
       </body>
     </html>

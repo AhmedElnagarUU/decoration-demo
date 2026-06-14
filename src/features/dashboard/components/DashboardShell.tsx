@@ -11,6 +11,7 @@ import { ConnectionStatusIndicator } from "@/features/dashboard/components/Conne
 import { LogoMark } from "@/shared/components/LogoMark";
 import {
   BarChart3,
+  Crosshair,
   FolderKanban,
   HelpCircle,
   LayoutDashboard,
@@ -29,6 +30,7 @@ const links = [
   { href: "/dashboard/projects", label: "Projects", Icon: FolderKanban, short: "Projects" },
   { href: "/dashboard/banners", label: "Banners", Icon: Megaphone, short: "Banners" },
   { href: "/dashboard/analytics", label: "Analytics", Icon: BarChart3, short: "Stats" },
+  { href: "/dashboard/pixels", label: "Pixels", Icon: Crosshair, short: "Pixels" },
   ...(IS_PHONE_OTP_AVAILABLE
     ? [{ href: "/dashboard/security", label: "Security", Icon: Shield, short: "Security" }]
     : []),
