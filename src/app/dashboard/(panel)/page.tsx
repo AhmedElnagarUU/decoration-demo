@@ -12,7 +12,7 @@ export default async function DashboardPage() {
   const stats = [
     { label: "Total Projects", value: projects.length },
     { label: "Page Views", value: summary.totalPageViews },
-    { label: "Top Country", value: summary.topCountry },
+    { label: "Unique Visitors", value: summary.uniqueVisitors },
     { label: "Most Visited", value: summary.mostVisitedPage },
   ];
 

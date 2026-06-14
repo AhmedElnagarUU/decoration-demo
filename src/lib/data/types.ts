@@ -43,8 +43,7 @@ export interface AnalyticsEvent {
   id: string;
   page: string;
   referrer: string;
-  country: string;
-  city: string;
+  visitorId: string;
   timestamp: string;
 }
 
@@ -74,16 +73,14 @@ export interface CreateBannerInput {
 export interface TrackAnalyticsInput {
   page: string;
   referrer: string;
-  country: string;
-  city: string;
+  visitorId: string;
   timestamp: string;
 }
 
 export interface AnalyticsSummary {
   totalPageViews: number;
+  uniqueVisitors: number;
   pageViews: { page: string; count: number }[];
-  countries: { country: string; city: string; count: number }[];
   referrers: { source: string; count: number }[];
-  topCountry: string;
   mostVisitedPage: string;
 }

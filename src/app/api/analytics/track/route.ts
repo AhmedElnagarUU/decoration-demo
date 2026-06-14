@@ -5,8 +5,7 @@ import { z } from "zod";
 const trackSchema = z.object({
   page: z.string().min(1),
   referrer: z.string(),
-  country: z.string(),
-  city: z.string(),
+  visitorId: z.string().min(1),
   timestamp: z.string(),
 });
 

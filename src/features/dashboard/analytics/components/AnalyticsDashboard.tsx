@@ -19,7 +19,7 @@ export function AnalyticsDashboard({ summary }: { summary: AnalyticsSummary }) {
   return (
     <div className="space-y-6 sm:space-y-8">
       <div
-        className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
+        className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3"
         data-tour="tour-analytics-stats"
       >
         <div className="rounded-sm bg-card p-4 shadow-sm sm:p-6">
@@ -29,12 +29,12 @@ export function AnalyticsDashboard({ summary }: { summary: AnalyticsSummary }) {
           </p>
         </div>
         <div className="rounded-sm bg-card p-4 shadow-sm sm:p-6">
-          <p className="text-xs text-muted sm:text-sm">Top Country</p>
-          <p className="mt-1 truncate text-2xl font-medium sm:mt-2 sm:text-3xl">
-            {summary.topCountry}
+          <p className="text-xs text-muted sm:text-sm">Unique Visitors</p>
+          <p className="mt-1 text-2xl font-medium sm:mt-2 sm:text-3xl">
+            {summary.uniqueVisitors}
           </p>
         </div>
-        <div className="col-span-2 rounded-sm bg-card p-4 shadow-sm sm:p-6">
+        <div className="col-span-2 rounded-sm bg-card p-4 shadow-sm sm:p-6 lg:col-span-1">
           <p className="text-xs text-muted sm:text-sm">Most Visited Page</p>
           <p className="mt-1 truncate text-lg font-medium sm:mt-2 sm:text-xl">
             {summary.mostVisitedPage}
@@ -88,55 +88,50 @@ export function AnalyticsDashboard({ summary }: { summary: AnalyticsSummary }) {
 
       <div className="rounded-sm bg-card shadow-sm">
         <div className="border-b border-border px-4 py-3 sm:px-6 sm:py-4">
-          <h2 className="font-medium">Visitors by Country</h2>
+          <h2 className="font-medium">Top Pages</h2>
         </div>
 
         <div className="divide-y divide-border md:hidden">
-          {summary.countries.length > 0 ? (
-            summary.countries.map((c) => (
+          {summary.pageViews.length > 0 ? (
+            summary.pageViews.map((page) => (
               <div
-                key={`${c.country}-${c.city}`}
+                key={page.page}
                 className="flex items-center justify-between px-4 py-3"
               >
-                <div>
-                  <p className="font-medium">{c.country}</p>
-                  <p className="text-sm text-muted">{c.city}</p>
-                </div>
-                <span className="text-sm font-medium">{c.count}</span>
+                <p className="truncate font-medium">{page.page}</p>
+                <span className="ml-3 shrink-0 text-sm font-medium">{page.count}</span>
               </div>
             ))
           ) : (
-            <p className="px-4 py-8 text-center text-muted">No visitor data yet</p>
+            <p className="px-4 py-8 text-center text-muted">No page view data yet</p>
           )}
         </div>
 
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border text-left text-muted">
-              <th className="px-6 py-3">Country</th>
-              <th className="px-6 py-3">City</th>
-              <th className="px-6 py-3">Visits</th>
-            </tr>
-          </thead>
-          <tbody>
-            {summary.countries.length > 0 ? (
-              summary.countries.map((c) => (
-                <tr key={`${c.country}-${c.city}`} className="border-b border-border">
-                  <td className="px-6 py-3">{c.country}</td>
-                  <td className="px-6 py-3">{c.city}</td>
-                  <td className="px-6 py-3">{c.count}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={3} className="px-6 py-8 text-center text-muted">
-                  No visitor data yet
-                </td>
+            <thead>
+              <tr className="border-b border-border text-left text-muted">
+                <th className="px-6 py-3">Page</th>
+                <th className="px-6 py-3">Views</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {summary.pageViews.length > 0 ? (
+                summary.pageViews.map((page) => (
+                  <tr key={page.page} className="border-b border-border">
+                    <td className="px-6 py-3">{page.page}</td>
+                    <td className="px-6 py-3">{page.count}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={2} className="px-6 py-8 text-center text-muted">
+                    No page view data yet
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

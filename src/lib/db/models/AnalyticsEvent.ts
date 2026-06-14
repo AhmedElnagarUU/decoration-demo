@@ -3,16 +3,14 @@ import mongoose, { Schema, type Model } from "mongoose";
 export interface IAnalyticsEvent {
   page: string;
   referrer: string;
-  country: string;
-  city: string;
+  visitorId: string;
   timestamp: Date;
 }
 
 const AnalyticsEventSchema = new Schema<IAnalyticsEvent>({
   page: { type: String, required: true },
   referrer: { type: String, default: "" },
-  country: { type: String, default: "Unknown" },
-  city: { type: String, default: "Unknown" },
+  visitorId: { type: String, required: true, index: true },
   timestamp: { type: Date, default: Date.now },
 });
 

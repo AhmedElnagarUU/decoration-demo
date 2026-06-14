@@ -1,3 +1,4 @@
+import { buildAnalyticsSummary } from "@/lib/analytics/summary";
 import { v4 as uuidv4 } from "uuid";
 import { DEMO_BANNERS, DEMO_PROJECTS } from "./demo-seed";
 import type {
@@ -71,66 +72,6 @@ function persistStore(store: DemoStore): void {
   } else {
     global.demoStore = store;
   }
-}
-
-function categorizeReferrer(referrer: string): string {
-  if (!referrer) return "Direct";
-  const lower = referrer.toLowerCase();
-  if (lower.includes("google") || lower.includes("bing")) return "Google";
-  if (
-    lower.includes("facebook") ||
-    lower.includes("twitter") ||
-    lower.includes("instagram") ||
-    lower.includes("linkedin")
-  )
-    return "Social";
-  return "Other";
-}
-
-function buildAnalyticsSummary(events: AnalyticsEvent[]): AnalyticsSummary {
-  const pageMap = new Map<string, number>();
-  const countryMap = new Map<string, { city: string; count: number }>();
-  const referrerMap = new Map<string, number>();
-
-  for (const event of events) {
-    pageMap.set(event.page, (pageMap.get(event.page) ?? 0) + 1);
-
-    const countryKey = event.country;
-    const existing = countryMap.get(countryKey);
-    if (existing) {
-      existing.count++;
-    } else {
-      countryMap.set(countryKey, { city: event.city, count: 1 });
-    }
-
-    const source = categorizeReferrer(event.referrer);
-    referrerMap.set(source, (referrerMap.get(source) ?? 0) + 1);
-  }
-
-  const pageViews = Array.from(pageMap.entries())
-    .map(([page, count]) => ({ page, count }))
-    .sort((a, b) => b.count - a.count);
-
-  const countries = Array.from(countryMap.entries())
-    .map(([country, data]) => ({
-      country,
-      city: data.city,
-      count: data.count,
-    }))
-    .sort((a, b) => b.count - a.count);
-
-  const referrers = Array.from(referrerMap.entries())
-    .map(([source, count]) => ({ source, count }))
-    .sort((a, b) => b.count - a.count);
-
-  return {
-    totalPageViews: events.length,
-    pageViews,
-    countries,
-    referrers,
-    topCountry: countries[0]?.country ?? "N/A",
-    mostVisitedPage: pageViews[0]?.page ?? "N/A",
-  };
 }
 
 export const demoData = {

@@ -15,7 +15,7 @@ const overviewSteps: TourStep[] = [
     target: "tour-stats-panel",
     title: "Key metrics",
     description:
-      "A quick snapshot of your portfolio size, page views, top country, and most visited page.",
+      "A quick snapshot of your portfolio size, page views, unique visitors, and most visited page.",
     placement: "bottom",
   },
   {
@@ -107,7 +107,7 @@ const analyticsSteps: TourStep[] = [
     target: "tour-analytics-stats",
     title: "Traffic overview",
     description:
-      "See total page views, your top visitor country, and the most popular page.",
+      "See total page views, unique visitors, and the most popular page.",
     placement: "bottom",
   },
   {
@@ -115,7 +115,7 @@ const analyticsSteps: TourStep[] = [
     target: "tour-analytics-charts",
     title: "Charts & breakdowns",
     description:
-      "Explore page popularity, referrer sources, and country distribution over time.",
+      "Explore page popularity and referrer sources over time.",
     placement: "top",
   },
 ];

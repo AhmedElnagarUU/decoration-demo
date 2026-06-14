@@ -39,7 +39,7 @@ export function ProjectForm({ project }: ProjectFormProps) {
   const [coverImage, setCoverImage] = useState(project?.coverImage ?? "");
   const [gallery, setGallery] = useState<string[]>(project?.gallery ?? []);
   const [tags, setTags] = useState(project?.tags.join(", ") ?? "");
-  const [sizeWarning, setSizeWarning] = useState("");
+  const [uploadWarning, setUploadWarning] = useState("");
 
   function handleTitleChange(value: string) {
     setTitleEn(value);
@@ -48,15 +48,31 @@ export function ProjectForm({ project }: ProjectFormProps) {
     }
   }
 
+  function getUploadWarnings(file: File): string[] {
+    const warnings: string[] = [];
+    const isWebp =
+      file.type === "image/webp" || file.name.toLowerCase().endsWith(".webp");
+
+    if (!isWebp) {
+      warnings.push(
+        "This image is not WebP. Convert it to WebP before uploading for smaller file sizes and faster page loads.",
+      );
+    }
+
+    if (IS_DEMO && file.size > 2 * 1024 * 1024) {
+      warnings.push(
+        "This image exceeds 2MB and may slow down demo mode storage.",
+      );
+    }
+
+    return warnings;
+  }
+
   async function uploadImage(file: File, currentSlug: string): Promise<string> {
+    const warnings = getUploadWarnings(file);
+    setUploadWarning(warnings.join(" "));
+
     if (IS_DEMO) {
-      if (file.size > 2 * 1024 * 1024) {
-        setSizeWarning(
-          "This image exceeds 2MB and may slow down demo mode storage. Consider using a smaller file.",
-        );
-      } else {
-        setSizeWarning("");
-      }
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result as string);
@@ -159,9 +175,9 @@ export function ProjectForm({ project }: ProjectFormProps) {
       {error && (
         <div className="rounded bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
       )}
-      {sizeWarning && (
+      {uploadWarning && (
         <div className="rounded bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          {sizeWarning}
+          {uploadWarning}
         </div>
       )}
 
@@ -288,26 +304,43 @@ export function ProjectForm({ project }: ProjectFormProps) {
         />
       </div>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Cover Image</label>
-        <input type="file" accept="image/*" onChange={handleCoverUpload} />
-        {coverImage && (
-          <img src={coverImage} alt="Cover" className="mt-2 h-32 object-cover" />
-        )}
-      </div>
+      <div className="space-y-4 rounded border border-amber-200/80 bg-amber-50/40 px-4 py-4">
+        <p className="text-xs text-amber-900">
+          <span className="font-medium">Tip:</span> Convert photos to{" "}
+          <strong>WebP</strong> before uploading. WebP keeps similar quality while
+          reducing file size, which helps pages load faster.
+        </p>
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Gallery Images</label>
-        <input type="file" accept="image/*" multiple onChange={handleGalleryUpload} />
-        {IS_DEMO && (
-          <p className="mt-1 text-xs text-muted">
-            Demo mode: images stored as base64 in localStorage. Max 2MB recommended.
-          </p>
-        )}
-        <div className="mt-2 flex flex-wrap gap-2">
-          {gallery.map((img, i) => (
-            <img key={i} src={img} alt={`Gallery ${i}`} className="h-20 w-20 object-cover" />
-          ))}
+        <div>
+          <label className="mb-1 block text-sm font-medium">Cover Image</label>
+          <input
+            type="file"
+            accept="image/*,image/webp"
+            onChange={handleCoverUpload}
+          />
+          {coverImage && (
+            <img src={coverImage} alt="Cover" className="mt-2 h-32 object-cover" />
+          )}
+        </div>
+
+        <div>
+          <label className="mb-1 block text-sm font-medium">Gallery Images</label>
+          <input
+            type="file"
+            accept="image/*,image/webp"
+            multiple
+            onChange={handleGalleryUpload}
+          />
+          {IS_DEMO && (
+            <p className="mt-1 text-xs text-muted">
+              Demo mode: images stored as base64 in localStorage. Max 2MB recommended.
+            </p>
+          )}
+          <div className="mt-2 flex flex-wrap gap-2">
+            {gallery.map((img, i) => (
+              <img key={i} src={img} alt={`Gallery ${i}`} className="h-20 w-20 object-cover" />
+            ))}
+          </div>
         </div>
       </div>
 

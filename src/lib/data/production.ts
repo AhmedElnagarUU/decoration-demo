@@ -1,3 +1,4 @@
+import { buildAnalyticsSummary } from "@/lib/analytics/summary";
 import { connectDB } from "@/lib/db/connection";
 import { AnalyticsEventModel } from "@/lib/db/models/AnalyticsEvent";
 import { BannerModel } from "@/lib/db/models/Banner";
@@ -63,20 +64,6 @@ function toBanner(doc: {
     expiresAt: doc.expiresAt?.toISOString(),
     createdAt: doc.createdAt.toISOString(),
   };
-}
-
-function categorizeReferrer(referrer: string): string {
-  if (!referrer) return "Direct";
-  const lower = referrer.toLowerCase();
-  if (lower.includes("google") || lower.includes("bing")) return "Google";
-  if (
-    lower.includes("facebook") ||
-    lower.includes("twitter") ||
-    lower.includes("instagram") ||
-    lower.includes("linkedin")
-  )
-    return "Social";
-  return "Other";
 }
 
 export const productionData = {
@@ -174,8 +161,7 @@ export const productionData = {
       id: doc._id.toString(),
       page: doc.page,
       referrer: doc.referrer,
-      country: doc.country,
-      city: doc.city,
+      visitorId: doc.visitorId,
       timestamp: doc.timestamp.toISOString(),
     };
   },
@@ -183,48 +169,14 @@ export const productionData = {
   async getAnalyticsSummary(): Promise<AnalyticsSummary> {
     await connectDB();
     const events = await AnalyticsEventModel.find();
-
-    const pageMap = new Map<string, number>();
-    const countryMap = new Map<string, { city: string; count: number }>();
-    const referrerMap = new Map<string, number>();
-
-    for (const event of events) {
-      pageMap.set(event.page, (pageMap.get(event.page) ?? 0) + 1);
-
-      const existing = countryMap.get(event.country);
-      if (existing) {
-        existing.count++;
-      } else {
-        countryMap.set(event.country, { city: event.city, count: 1 });
-      }
-
-      const source = categorizeReferrer(event.referrer);
-      referrerMap.set(source, (referrerMap.get(source) ?? 0) + 1);
-    }
-
-    const pageViews = Array.from(pageMap.entries())
-      .map(([page, count]) => ({ page, count }))
-      .sort((a, b) => b.count - a.count);
-
-    const countries = Array.from(countryMap.entries())
-      .map(([country, data]) => ({
-        country,
-        city: data.city,
-        count: data.count,
-      }))
-      .sort((a, b) => b.count - a.count);
-
-    const referrers = Array.from(referrerMap.entries())
-      .map(([source, count]) => ({ source, count }))
-      .sort((a, b) => b.count - a.count);
-
-    return {
-      totalPageViews: events.length,
-      pageViews,
-      countries,
-      referrers,
-      topCountry: countries[0]?.country ?? "N/A",
-      mostVisitedPage: pageViews[0]?.page ?? "N/A",
-    };
+    return buildAnalyticsSummary(
+      events.map((doc) => ({
+        id: doc._id.toString(),
+        page: doc.page,
+        referrer: doc.referrer,
+        visitorId: doc.visitorId ?? doc._id.toString(),
+        timestamp: doc.timestamp.toISOString(),
+      })),
+    );
   },
 };
