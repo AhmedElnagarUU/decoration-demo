@@ -8,6 +8,7 @@ import {
   useDashboardTour,
 } from "@/features/dashboard/tour/DashboardTour";
 import { ConnectionStatusIndicator } from "@/features/dashboard/components/ConnectionStatusIndicator";
+import { FeedbackWidget } from "@/features/dashboard/components/FeedbackWidget";
 import { LogoMark } from "@/shared/components/LogoMark";
 import {
   BarChart3,
@@ -205,6 +206,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+
+      <FeedbackWidget />
 
       {/* Mobile bottom nav */}
       <nav
