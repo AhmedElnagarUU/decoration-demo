@@ -6,4 +6,12 @@ const dataLayer = IS_DEMO ? demoData : productionData;
 
 export const data = dataLayer;
 
-export type { Project, Banner, AnalyticsEvent, AnalyticsSummary } from "./types";
+export type {
+  Project,
+  Banner,
+  AnalyticsEvent,
+  AnalyticsSummary,
+  Pixel,
+  PublicPixel,
+  PixelPlatform,
+} from "./types";

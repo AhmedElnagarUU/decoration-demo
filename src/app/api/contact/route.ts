@@ -1,3 +1,4 @@
+import { fireMetaConversionsForSite } from "@/lib/pixels/meta-conversion-api";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -15,6 +16,11 @@ export async function POST(request: NextRequest) {
 
     // In production, send email or store in DB
     console.log("Contact form submission:", parsed);
+
+    await fireMetaConversionsForSite("Lead", {
+      email: parsed.email,
+      phone: parsed.phone,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
