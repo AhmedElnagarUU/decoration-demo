@@ -1,4 +1,10 @@
 @import "tailwindcss";
+@import "@fontsource-variable/inter/wght.css";
+@import "@fontsource-variable/dm-sans/wght.css";
+@import "@fontsource/cormorant-garamond/latin-400.css";
+@import "@fontsource/cormorant-garamond/latin-500.css";
+@import "@fontsource/cormorant-garamond/latin-600.css";
+@import "@fontsource/cormorant-garamond/latin-700.css";
 
 @theme inline {
   --color-background: #f9f9f9;
@@ -9,14 +15,14 @@
   --color-card: #ffffff;
   --color-border: #e5e5e5;
 
-  --font-sans: var(--font-dm-sans);
-  --font-serif: var(--font-cormorant);
+  --font-sans: "DM Sans Variable", system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: "Inter Variable", var(--font-sans), system-ui, sans-serif;
   letter-spacing: 0.01em;
 }
 

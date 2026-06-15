@@ -28,9 +28,9 @@ export default function SecurityPage() {
       <div className="mb-6 flex items-center gap-3">
         <Shield className="h-6 w-6 text-accent" />
         <div>
-          <h1 className="text-2xl font-medium">Security</h1>
+          <h1 className="text-2xl font-medium">Security OTP</h1>
           <p className="mt-1 text-sm text-muted">
-            Manage optional phone-based sign-in for your account.
+            Add and verify your phone number for optional OTP sign-in.
           </p>
         </div>
       </div>

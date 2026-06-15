@@ -2,14 +2,16 @@
 
 import { routing } from "@/i18n/routing";
 import { SITE_NAME } from "@/lib/constants";
-import { IS_PHONE_OTP_AVAILABLE } from "@/lib/config";
 import { signOut } from "@/lib/auth/auth-client";
 import {
   DashboardTourButton,
   useDashboardTour,
 } from "@/features/dashboard/tour/DashboardTour";
 import { ConnectionStatusIndicator } from "@/features/dashboard/components/ConnectionStatusIndicator";
-import { FeedbackWidget } from "@/features/dashboard/components/FeedbackWidget";
+import {
+  FeedbackNavButton,
+  FeedbackProvider,
+} from "@/features/dashboard/components/FeedbackWidget";
 import { LogoMark } from "@/shared/components/LogoMark";
 import {
   BarChart3,
@@ -36,9 +38,12 @@ const links = [
   { href: "/dashboard/banners", label: "Banners", Icon: Megaphone, short: "Banners" },
   { href: "/dashboard/analytics", label: "Analytics", Icon: BarChart3, short: "Stats" },
   { href: "/dashboard/pixels", label: "Pixels", Icon: Crosshair, short: "Pixels" },
-  ...(IS_PHONE_OTP_AVAILABLE
-    ? [{ href: "/dashboard/security", label: "Security", Icon: Shield, short: "Security" }]
-    : []),
+  {
+    href: "/dashboard/security",
+    label: "Security OTP",
+    Icon: Shield,
+    short: "OTP",
+  },
 ];
 
 function NavLink({
@@ -116,6 +121,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
+    <FeedbackProvider>
     <div className="min-h-screen bg-background pb-16 lg:pb-0">
       {/* Mobile top bar */}
       <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-card px-4 py-3 lg:hidden">
@@ -191,6 +197,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   onNavigate={() => setDrawerOpen(false)}
                 />
               ))}
+              <FeedbackNavButton onNavigate={() => setDrawerOpen(false)} />
             </nav>
             <div className="space-y-1 border-t border-border p-3">
               <ConnectionStatusIndicator />
@@ -224,6 +231,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             {links.map((link) => (
               <NavLink key={link.href} {...link} pathname={pathname} />
             ))}
+            <FeedbackNavButton />
           </nav>
           <div className="space-y-1 border-t border-border p-4">
             <ConnectionStatusIndicator />
@@ -244,15 +252,13 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         </main>
       </div>
 
-      <FeedbackWidget />
-
       {/* Mobile bottom nav */}
       <nav
         className="fixed right-0 bottom-0 left-0 z-40 border-t border-border bg-card lg:hidden"
         data-tour="tour-nav-mobile"
       >
         <div
-          className={`grid ${links.length > 4 ? "grid-cols-5" : "grid-cols-4"}`}
+          className={`grid ${links.length > 5 ? "grid-cols-6" : links.length > 4 ? "grid-cols-5" : "grid-cols-4"}`}
         >
           {links.map((link) => (
             <NavLink
@@ -267,5 +273,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
     </div>
+    </FeedbackProvider>
   );
 }

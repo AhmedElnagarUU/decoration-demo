@@ -14,9 +14,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ARG NEXT_PUBLIC_APP_MODE=demo
-ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
-ENV NEXT_PUBLIC_APP_MODE=$NEXT_PUBLIC_APP_MODE
-ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
+ARG NEXT_PUBLIC_APP_URL=https://valor.infinity-demo.online/
+ENV NEXT_PUBLIC_APP_MODE=demo
+ENV NEXT_PUBLIC_APP_URL=https://valor.infinity-demo.online/
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build

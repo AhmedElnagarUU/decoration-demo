@@ -4,15 +4,41 @@ import { Button } from "@/shared/components/Button";
 import { cn } from "@/lib/utils/cn";
 import { MessageSquare, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  type ReactNode,
+} from "react";
 
-export function FeedbackWidget() {
+interface FeedbackContextValue {
+  openFeedback: () => void;
+}
+
+const FeedbackContext = createContext<FeedbackContextValue | null>(null);
+
+function useFeedback() {
+  const context = useContext(FeedbackContext);
+  if (!context) {
+    throw new Error("useFeedback must be used within FeedbackProvider");
+  }
+  return context;
+}
+
+export function FeedbackProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+
+  const openFeedback = useCallback(() => {
+    setSubmitted(false);
+    setError("");
+    setOpen(true);
+  }, []);
 
   function handleClose() {
     setOpen(false);
@@ -45,27 +71,9 @@ export function FeedbackWidget() {
     }
   }
 
-  function handleOpen() {
-    setSubmitted(false);
-    setError("");
-    setOpen(true);
-  }
-
   return (
-    <>
-      <button
-        type="button"
-        onClick={handleOpen}
-        className={cn(
-          "fixed z-40 flex items-center gap-2 rounded-r-sm border border-l-0 border-border bg-card px-3 py-3 text-sm text-muted shadow-sm transition-colors hover:bg-background hover:text-foreground",
-          "left-0 top-1/2 -translate-y-1/2 lg:left-64",
-          "max-lg:bottom-20 max-lg:top-auto max-lg:translate-y-0 max-lg:rounded-sm max-lg:border max-lg:left-4",
-        )}
-        aria-label="Open feedback"
-      >
-        <MessageSquare className="h-5 w-5 shrink-0" strokeWidth={1.75} />
-        <span className="hidden sm:inline">Feedback</span>
-      </button>
+    <FeedbackContext.Provider value={{ openFeedback }}>
+      {children}
 
       {open && (
         <div className="fixed inset-0 z-[100] flex items-end justify-center p-4 sm:items-center">
@@ -152,6 +160,38 @@ export function FeedbackWidget() {
           </div>
         </div>
       )}
-    </>
+    </FeedbackContext.Provider>
+  );
+}
+
+export function FeedbackNavButton({
+  compact,
+  onNavigate,
+}: {
+  compact?: boolean;
+  onNavigate?: () => void;
+}) {
+  const { openFeedback } = useFeedback();
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        openFeedback();
+        onNavigate?.();
+      }}
+      className={cn(
+        "flex w-full items-center gap-3 rounded px-3 py-2.5 text-left text-sm text-muted transition-colors hover:bg-background hover:text-foreground",
+        compact && "flex-col gap-1 px-2 py-2 text-[10px]",
+      )}
+    >
+      <MessageSquare
+        className={compact ? "h-5 w-5" : "h-4 w-4"}
+        strokeWidth={1.75}
+      />
+      <span className={compact ? "leading-tight" : ""}>
+        {compact ? "Feedback" : "Feedback"}
+      </span>
+    </button>
   );
 }

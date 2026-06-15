@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full" suppressHydrationWarning>
       <head>
         {/* <!-- Google tag (gtag.js) --> */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-60KBZZRQ01"></script>
@@ -28,7 +28,12 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>{children}</body>
+      <body
+        className="min-h-screen bg-background antialiased"
+        suppressHydrationWarning
+      >
+        {children}
+      </body>
     </html>
   );
 }
