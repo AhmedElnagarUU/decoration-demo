@@ -2,7 +2,7 @@ import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "./i18n/routing";
 
-const intlMiddleware = createMiddleware(routing);
+const handleI18nRouting = createMiddleware(routing);
 
 const AUTH_PUBLIC = ["/login", "/register"];
 
@@ -13,7 +13,7 @@ function hasAuthSession(request: NextRequest): boolean {
   );
 }
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isAuthRoute = AUTH_PUBLIC.some(
@@ -44,7 +44,7 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  return intlMiddleware(request);
+  return handleI18nRouting(request);
 }
 
 export const config = {
