@@ -1,5 +1,6 @@
 "use client";
 
+import { routing } from "@/i18n/routing";
 import { SITE_NAME } from "@/lib/constants";
 import { IS_PHONE_OTP_AVAILABLE } from "@/lib/config";
 import { signOut } from "@/lib/auth/auth-client";
@@ -13,6 +14,7 @@ import { LogoMark } from "@/shared/components/LogoMark";
 import {
   BarChart3,
   Crosshair,
+  Eye,
   FolderKanban,
   HelpCircle,
   LayoutDashboard,
@@ -25,6 +27,8 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+
+const storefrontUrl = `/${routing.defaultLocale}`;
 
 const links = [
   { href: "/dashboard", label: "Overview", Icon: LayoutDashboard, short: "Home" },
@@ -79,6 +83,26 @@ function NavLink({
   );
 }
 
+function ViewStorefrontLink({
+  className,
+  iconClassName = "h-4 w-4",
+}: {
+  className?: string;
+  iconClassName?: string;
+}) {
+  return (
+    <a
+      href={storefrontUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      aria-label="View storefront"
+    >
+      <Eye className={iconClassName} strokeWidth={1.75} />
+    </a>
+  );
+}
+
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -103,6 +127,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         </div>
         <div className="flex items-center gap-1">
           <ConnectionStatusIndicator compact />
+          <ViewStorefrontLink
+            className="rounded p-2 text-muted hover:bg-background hover:text-foreground"
+            iconClassName="h-5 w-5"
+          />
           <button
             type="button"
             onClick={startTour}
@@ -139,14 +167,20 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                   {SITE_NAME}
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={() => setDrawerOpen(false)}
-                className="rounded p-1 text-muted hover:text-foreground"
-                aria-label="Close menu"
-              >
-                <X className="h-5 w-5" />
-              </button>
+              <div className="flex items-center gap-1">
+                <ViewStorefrontLink
+                  className="rounded p-1.5 text-muted hover:bg-background hover:text-foreground"
+                  iconClassName="h-5 w-5"
+                />
+                <button
+                  type="button"
+                  onClick={() => setDrawerOpen(false)}
+                  className="rounded p-1 text-muted hover:text-foreground"
+                  aria-label="Close menu"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
             </div>
             <nav className="flex-1 space-y-1 p-3" data-tour="tour-nav-sidebar">
               {links.map((link) => (
@@ -177,11 +211,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <div className="lg:flex">
         {/* Desktop sidebar */}
         <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-card lg:flex">
-          <div className="flex items-center gap-2 border-b border-border px-6 py-5">
-            <LogoMark className="h-4 w-4" />
-            <span className="font-serif text-sm font-semibold tracking-[0.15em] uppercase">
-              {SITE_NAME}
-            </span>
+          <div className="flex items-center justify-between border-b border-border px-6 py-5">
+            <div className="flex items-center gap-2">
+              <LogoMark className="h-4 w-4" />
+              <span className="font-serif text-sm font-semibold tracking-[0.15em] uppercase">
+                {SITE_NAME}
+              </span>
+            </div>
+            <ViewStorefrontLink className="rounded p-1.5 text-muted transition-colors hover:bg-background hover:text-foreground" />
           </div>
           <nav className="flex-1 space-y-1 p-4" data-tour="tour-nav-sidebar">
             {links.map((link) => (
