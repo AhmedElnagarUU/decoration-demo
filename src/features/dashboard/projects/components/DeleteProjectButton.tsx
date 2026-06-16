@@ -1,5 +1,7 @@
 "use client";
 
+import { IS_DEMO } from "@/lib/config";
+import { syncDemoStoreFromServer } from "@/lib/data/demo-client-sync";
 import { ConfirmDialog } from "@/shared/components/ConfirmDialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -13,6 +15,9 @@ export function DeleteProjectButton({ id }: { id: string }) {
     setLoading(true);
     try {
       await fetch(`/api/projects/${id}`, { method: "DELETE" });
+      if (IS_DEMO) {
+        await syncDemoStoreFromServer();
+      }
       setOpen(false);
       router.refresh();
     } finally {

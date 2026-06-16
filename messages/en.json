@@ -9,6 +9,7 @@
     "work": "Our Work",
     "services": "Services",
     "contact": "Contact",
+    "privacy": "Privacy Policy",
     "login": "Login",
     "register": "Register"
   },
@@ -58,7 +59,14 @@
     "testimonials": "What Our Clients Say",
     "ctaTitle": "Ready to Transform Your Space?",
     "ctaSubtitle": "Let us help you create the home of your dreams.",
-    "ctaButton": "Get in Touch"
+    "ctaButton": "Get in Touch",
+    "newsletterTitle": "Stay in the Loop",
+    "newsletterSubtitle": "Sign up with your email to get our latest projects, design tips, and updates.",
+    "newsletterPlaceholder": "Your email address",
+    "newsletterButton": "Subscribe",
+    "newsletterSubmitting": "Subscribing...",
+    "newsletterSuccess": "You're subscribed! We'll keep you posted on our latest work.",
+    "newsletterError": "Something went wrong. Please try again."
   },
   "services": {
     "title": "Our Services",
@@ -102,6 +110,10 @@
     "address": "Address",
     "phoneLabel": "Phone",
     "emailLabel": "Email"
+  },
+  "privacyPage": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated"
   },
   "footer": {
     "tagline": "Elevating homes with modern design",

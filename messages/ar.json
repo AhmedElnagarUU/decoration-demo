@@ -9,6 +9,7 @@
     "work": "أعمالنا",
     "services": "الخدمات",
     "contact": "اتصل بنا",
+    "privacy": "سياسة الخصوصية",
     "login": "تسجيل الدخول",
     "register": "إنشاء حساب"
   },
@@ -58,7 +59,14 @@
     "testimonials": "ماذا يقول عملاؤنا",
     "ctaTitle": "مستعد لتحويل مساحتك؟",
     "ctaSubtitle": "دعنا نساعدك في إنشاء منزل أحلامك.",
-    "ctaButton": "تواصل معنا"
+    "ctaButton": "تواصل معنا",
+    "newsletterTitle": "ابقَ على اطلاع",
+    "newsletterSubtitle": "سجّل بريدك الإلكتروني لتحصل على أحدث مشاريعنا ونصائح التصميم والتحديثات.",
+    "newsletterPlaceholder": "بريدك الإلكتروني",
+    "newsletterButton": "اشترك",
+    "newsletterSubmitting": "جارٍ الاشتراك...",
+    "newsletterSuccess": "تم الاشتراك! سنبقيك على اطلاع بأحدث أعمالنا.",
+    "newsletterError": "حدث خطأ. يرجى المحاولة مرة أخرى."
   },
   "services": {
     "title": "خدماتنا",
@@ -102,6 +110,10 @@
     "address": "العنوان",
     "phoneLabel": "الهاتف",
     "emailLabel": "البريد الإلكتروني"
+  },
+  "privacyPage": {
+    "title": "سياسة الخصوصية",
+    "lastUpdated": "آخر تحديث"
   },
   "footer": {
     "tagline": "نرتقي بالمنازل بتصميم عصري",

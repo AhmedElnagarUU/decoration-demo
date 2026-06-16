@@ -2,9 +2,9 @@
 
 import type { Project } from "@/lib/data/types";
 import { Button } from "@/shared/components/Button";
+import { ProjectCoverImage } from "@/shared/components/ProjectCoverImage";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
-import Image from "next/image";
 import Link from "next/link";
 
 export function OurWorkSection({ projects }: { projects: Project[] }) {
@@ -34,7 +34,7 @@ export function OurWorkSection({ projects }: { projects: Project[] }) {
                 className="group block overflow-hidden rounded-sm shadow-sm"
               >
                 <div className="relative aspect-[4/3]">
-                  <Image
+                  <ProjectCoverImage
                     src={project.coverImage}
                     alt={locale === "ar" ? project.title.ar : project.title.en}
                     fill

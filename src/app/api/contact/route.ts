@@ -1,4 +1,6 @@
+import { data } from "@/lib/data";
 import { fireMetaConversionsForSite } from "@/lib/pixels/meta-conversion-api";
+import { revalidateContentPaths } from "@/lib/revalidate-content";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -14,8 +16,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const parsed = contactSchema.parse(body);
 
-    // In production, send email or store in DB
-    console.log("Contact form submission:", parsed);
+    await data.createInquiry({
+      name: parsed.name,
+      email: parsed.email,
+      phone: parsed.phone,
+      message: parsed.message,
+      source: "contact",
+    });
+
+    revalidateContentPaths();
 
     await fireMetaConversionsForSite("Lead", {
       email: parsed.email,

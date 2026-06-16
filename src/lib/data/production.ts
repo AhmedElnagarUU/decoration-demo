@@ -1,16 +1,15 @@
-import { buildAnalyticsSummary } from "@/lib/analytics/summary";
 import { connectDB } from "@/lib/db/connection";
-import { AnalyticsEventModel } from "@/lib/db/models/AnalyticsEvent";
 import { BannerModel } from "@/lib/db/models/Banner";
+import { InquiryModel } from "@/lib/db/models/Inquiry";
 import { ProjectModel } from "@/lib/db/models/Project";
 import type {
-  AnalyticsEvent,
-  AnalyticsSummary,
   Banner,
   CreateBannerInput,
+  CreateInquiryInput,
   CreateProjectInput,
+  Inquiry,
   Project,
-  TrackAnalyticsInput,
+  UpdateInquiryInput,
   UpdateProjectInput,
 } from "./types";
 
@@ -62,6 +61,28 @@ function toBanner(doc: {
     link: doc.link,
     active: doc.active,
     expiresAt: doc.expiresAt?.toISOString(),
+    createdAt: doc.createdAt.toISOString(),
+  };
+}
+
+function toInquiry(doc: {
+  _id: { toString(): string };
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  source?: "contact" | "newsletter";
+  status: "new" | "read" | "archived";
+  createdAt: Date;
+}): Inquiry {
+  return {
+    id: doc._id.toString(),
+    name: doc.name,
+    email: doc.email,
+    phone: doc.phone,
+    message: doc.message,
+    source: doc.source ?? "contact",
+    status: doc.status,
     createdAt: doc.createdAt.toISOString(),
   };
 }
@@ -151,32 +172,30 @@ export const productionData = {
     return !!result;
   },
 
-  async trackAnalytics(input: TrackAnalyticsInput): Promise<AnalyticsEvent> {
+  async getInquiries(): Promise<Inquiry[]> {
     await connectDB();
-    const doc = await AnalyticsEventModel.create({
-      ...input,
-      timestamp: new Date(input.timestamp),
-    });
-    return {
-      id: doc._id.toString(),
-      page: doc.page,
-      referrer: doc.referrer,
-      visitorId: doc.visitorId,
-      timestamp: doc.timestamp.toISOString(),
-    };
+    const docs = await InquiryModel.find().sort({ createdAt: -1 });
+    return docs.map(toInquiry);
   },
 
-  async getAnalyticsSummary(): Promise<AnalyticsSummary> {
+  async createInquiry(input: CreateInquiryInput): Promise<Inquiry> {
     await connectDB();
-    const events = await AnalyticsEventModel.find();
-    return buildAnalyticsSummary(
-      events.map((doc) => ({
-        id: doc._id.toString(),
-        page: doc.page,
-        referrer: doc.referrer,
-        visitorId: doc.visitorId ?? doc._id.toString(),
-        timestamp: doc.timestamp.toISOString(),
-      })),
-    );
+    const doc = await InquiryModel.create(input);
+    return toInquiry(doc);
+  },
+
+  async updateInquiry(
+    id: string,
+    input: UpdateInquiryInput,
+  ): Promise<Inquiry | null> {
+    await connectDB();
+    const doc = await InquiryModel.findByIdAndUpdate(id, input, { new: true });
+    return doc ? toInquiry(doc) : null;
+  },
+
+  async deleteInquiry(id: string): Promise<boolean> {
+    await connectDB();
+    const result = await InquiryModel.findByIdAndDelete(id);
+    return !!result;
   },
 };

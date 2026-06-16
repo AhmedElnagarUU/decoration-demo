@@ -1,7 +1,9 @@
 import { data } from "@/lib/data";
 import { DeleteProjectButton } from "@/features/dashboard/projects/components/DeleteProjectButton";
-import Image from "next/image";
+import { ProjectCoverImage } from "@/shared/components/ProjectCoverImage";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
 
 export default async function ProjectsPage() {
   const projects = await data.getProjects();
@@ -28,7 +30,7 @@ export default async function ProjectsPage() {
           >
             <div className="flex gap-3">
               <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded">
-                <Image
+                <ProjectCoverImage
                   src={project.coverImage}
                   alt={project.title.en}
                   fill
@@ -90,7 +92,7 @@ export default async function ProjectsPage() {
                 <tr key={project.id} className="border-b border-border">
                   <td className="px-6 py-3">
                     <div className="relative h-10 w-14 overflow-hidden rounded">
-                      <Image
+                      <ProjectCoverImage
                         src={project.coverImage}
                         alt={project.title.en}
                         fill

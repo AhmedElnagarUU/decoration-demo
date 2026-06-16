@@ -1,6 +1,7 @@
 import { data } from "@/lib/data";
 import { deleteS3Image, extractS3Key } from "@/lib/s3/upload";
 import { IS_PRODUCTION } from "@/lib/config";
+import { revalidateContentPaths } from "@/lib/revalidate-content";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -44,6 +45,7 @@ export async function PUT(
     if (!project) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+    revalidateContentPaths();
     return NextResponse.json({ project });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -79,5 +81,6 @@ export async function DELETE(
   }
 
   await data.deleteProject(id);
+  revalidateContentPaths();
   return NextResponse.json({ success: true });
 }

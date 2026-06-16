@@ -1,4 +1,5 @@
 import { data } from "@/lib/data";
+import { revalidateContentPaths } from "@/lib/revalidate-content";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -21,6 +22,7 @@ export async function PUT(
     if (!banner) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+    revalidateContentPaths();
     return NextResponse.json({ banner });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -39,5 +41,6 @@ export async function DELETE(
   if (!success) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+  revalidateContentPaths();
   return NextResponse.json({ success: true });
 }

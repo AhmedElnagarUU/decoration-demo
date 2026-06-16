@@ -14,16 +14,18 @@ import {
 } from "@/features/dashboard/components/FeedbackWidget";
 import { LogoMark } from "@/shared/components/LogoMark";
 import {
-  BarChart3,
   Crosshair,
   Eye,
   FolderKanban,
   HelpCircle,
+  Inbox,
   LayoutDashboard,
   LogOut,
   Megaphone,
   Menu,
+  Share2,
   Shield,
+  FileText,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -36,7 +38,9 @@ const links = [
   { href: "/dashboard", label: "Overview", Icon: LayoutDashboard, short: "Home" },
   { href: "/dashboard/projects", label: "Projects", Icon: FolderKanban, short: "Projects" },
   { href: "/dashboard/banners", label: "Banners", Icon: Megaphone, short: "Banners" },
-  { href: "/dashboard/analytics", label: "Analytics", Icon: BarChart3, short: "Stats" },
+  { href: "/dashboard/inquiries", label: "Inquiries", Icon: Inbox, short: "Leads" },
+  { href: "/dashboard/social", label: "Social Links", Icon: Share2, short: "Social" },
+  { href: "/dashboard/privacy", label: "Privacy Policy", Icon: FileText, short: "Policy" },
   { href: "/dashboard/pixels", label: "Pixels", Icon: Crosshair, short: "Pixels" },
   {
     href: "/dashboard/security",
@@ -258,7 +262,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         data-tour="tour-nav-mobile"
       >
         <div
-          className={`grid ${links.length > 5 ? "grid-cols-6" : links.length > 4 ? "grid-cols-5" : "grid-cols-4"}`}
+          className={`grid ${links.length > 6 ? "grid-cols-7" : links.length > 5 ? "grid-cols-6" : links.length > 4 ? "grid-cols-5" : "grid-cols-4"}`}
         >
           {links.map((link) => (
             <NavLink

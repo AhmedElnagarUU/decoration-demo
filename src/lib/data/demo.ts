@@ -1,4 +1,3 @@
-import { buildAnalyticsSummary } from "@/lib/analytics/summary";
 import {
   getLocalStorageItem,
   setLocalStorageItem,
@@ -6,26 +5,27 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { DEMO_BANNERS, DEMO_PROJECTS } from "./demo-seed";
 import type {
-  AnalyticsEvent,
-  AnalyticsSummary,
   Banner,
   CreateBannerInput,
+  CreateInquiryInput,
   CreateProjectInput,
+  Inquiry,
+  InquiryStatus,
   Project,
-  TrackAnalyticsInput,
+  UpdateInquiryInput,
   UpdateProjectInput,
 } from "./types";
 
 const KEYS = {
   projects: "dc_projects",
   banners: "dc_banners",
-  analytics: "dc_analytics",
+  inquiries: "dc_inquiries",
 } as const;
 
-interface DemoStore {
+export interface DemoStore {
   projects: Project[];
   banners: Banner[];
-  analytics: AnalyticsEvent[];
+  inquiries: Inquiry[];
 }
 
 declare global {
@@ -33,14 +33,16 @@ declare global {
   var demoStore: DemoStore | undefined;
 }
 
+function normalizeDemoStore(store: Partial<DemoStore>): DemoStore {
+  return {
+    projects: store.projects ?? [...DEMO_PROJECTS],
+    banners: store.banners ?? [...DEMO_BANNERS],
+    inquiries: store.inquiries ?? [],
+  };
+}
+
 function getServerStore(): DemoStore {
-  if (!global.demoStore) {
-    global.demoStore = {
-      projects: [...DEMO_PROJECTS],
-      banners: [...DEMO_BANNERS],
-      analytics: [],
-    };
-  }
+  global.demoStore = normalizeDemoStore(global.demoStore ?? {});
   return global.demoStore;
 }
 
@@ -49,20 +51,20 @@ function readClientStore(): DemoStore {
 
   const projects = getLocalStorageItem(KEYS.projects);
   const banners = getLocalStorageItem(KEYS.banners);
-  const analytics = getLocalStorageItem(KEYS.analytics);
+  const inquiries = getLocalStorageItem(KEYS.inquiries);
 
-  return {
+  return normalizeDemoStore({
     projects: projects ? JSON.parse(projects) : DEMO_PROJECTS,
     banners: banners ? JSON.parse(banners) : DEMO_BANNERS,
-    analytics: analytics ? JSON.parse(analytics) : [],
-  };
+    inquiries: inquiries ? JSON.parse(inquiries) : [],
+  });
 }
 
 function writeClientStore(store: DemoStore): void {
   if (typeof window === "undefined") return;
   setLocalStorageItem(KEYS.projects, JSON.stringify(store.projects));
   setLocalStorageItem(KEYS.banners, JSON.stringify(store.banners));
-  setLocalStorageItem(KEYS.analytics, JSON.stringify(store.analytics));
+  setLocalStorageItem(KEYS.inquiries, JSON.stringify(store.inquiries));
 }
 
 function getStore(): DemoStore {
@@ -76,6 +78,17 @@ function persistStore(store: DemoStore): void {
   } else {
     global.demoStore = store;
   }
+}
+
+export function getDemoStoreSnapshot(): DemoStore {
+  return getServerStore();
+}
+
+export function hydrateDemoStore(input: Partial<DemoStore>): void {
+  global.demoStore = normalizeDemoStore({
+    ...getServerStore(),
+    ...input,
+  });
 }
 
 export const demoData = {
@@ -188,15 +201,48 @@ export const demoData = {
     return true;
   },
 
-  async trackAnalytics(input: TrackAnalyticsInput): Promise<AnalyticsEvent> {
-    const store = getStore();
-    const event: AnalyticsEvent = { id: uuidv4(), ...input };
-    store.analytics.push(event);
-    persistStore(store);
-    return event;
+  async getInquiries(): Promise<Inquiry[]> {
+    const inquiries = (getStore().inquiries ?? []).map((inquiry) => ({
+      ...inquiry,
+      source: inquiry.source ?? "contact",
+    }));
+    return inquiries.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
   },
 
-  async getAnalyticsSummary(): Promise<AnalyticsSummary> {
-    return buildAnalyticsSummary(getStore().analytics);
+  async createInquiry(input: CreateInquiryInput): Promise<Inquiry> {
+    const store = getStore();
+    const inquiry: Inquiry = {
+      id: uuidv4(),
+      ...input,
+      source: input.source ?? "contact",
+      status: "new" as InquiryStatus,
+      createdAt: new Date().toISOString(),
+    };
+    store.inquiries.push(inquiry);
+    persistStore(store);
+    return inquiry;
+  },
+
+  async updateInquiry(
+    id: string,
+    input: UpdateInquiryInput,
+  ): Promise<Inquiry | null> {
+    const store = getStore();
+    const index = store.inquiries.findIndex((i) => i.id === id);
+    if (index === -1) return null;
+    store.inquiries[index] = { ...store.inquiries[index], ...input };
+    persistStore(store);
+    return store.inquiries[index];
+  },
+
+  async deleteInquiry(id: string): Promise<boolean> {
+    const store = getStore();
+    const index = store.inquiries.findIndex((i) => i.id === id);
+    if (index === -1) return false;
+    store.inquiries.splice(index, 1);
+    persistStore(store);
+    return true;
   },
 };

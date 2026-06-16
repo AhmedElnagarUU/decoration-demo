@@ -1,4 +1,5 @@
 import { pixels } from "@/lib/pixels/service";
+import { revalidateContentPaths } from "@/lib/revalidate-content";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -30,6 +31,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const parsed = createSchema.parse(body);
     const pixel = await pixels.createPixel(parsed);
+    revalidateContentPaths();
     return NextResponse.json({ pixel }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {

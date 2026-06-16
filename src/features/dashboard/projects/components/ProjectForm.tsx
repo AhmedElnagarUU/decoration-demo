@@ -1,7 +1,9 @@
 "use client";
 
 import { IS_DEMO } from "@/lib/config";
+import { syncDemoStoreFromServer } from "@/lib/data/demo-client-sync";
 import type { Project } from "@/lib/data/types";
+import { formatApiError } from "@/lib/utils/api-error";
 import { generateSlug } from "@/lib/utils/slug";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -151,7 +153,11 @@ export function ProjectForm({ project }: ProjectFormProps) {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error ?? "Failed to save");
+        throw new Error(formatApiError(data.error));
+      }
+
+      if (IS_DEMO) {
+        await syncDemoStoreFromServer();
       }
 
       router.push("/dashboard/projects");

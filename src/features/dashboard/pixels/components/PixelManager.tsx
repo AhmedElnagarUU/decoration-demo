@@ -1,6 +1,8 @@
 "use client";
 
 import type { Pixel, PixelPlatform } from "@/lib/data/types";
+import { IS_DEMO } from "@/lib/config";
+import { syncDemoStoreFromServer } from "@/lib/data/demo-client-sync";
 import { ConfirmDialog } from "@/shared/components/ConfirmDialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -71,6 +73,7 @@ export function PixelManager({ initialPixels }: { initialPixels: Pixel[] }) {
       setEnabled(true);
       setAccessToken("");
       setTestEventCode("");
+      if (IS_DEMO) await syncDemoStoreFromServer();
       router.refresh();
       await refreshPixels();
     }
@@ -82,6 +85,7 @@ export function PixelManager({ initialPixels }: { initialPixels: Pixel[] }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ enabled: !currentEnabled }),
     });
+    if (IS_DEMO) await syncDemoStoreFromServer();
     router.refresh();
     await refreshPixels();
   }
@@ -91,6 +95,7 @@ export function PixelManager({ initialPixels }: { initialPixels: Pixel[] }) {
     setDeleting(true);
     try {
       await fetch(`/api/pixels/${deleteId}`, { method: "DELETE" });
+      if (IS_DEMO) await syncDemoStoreFromServer();
       router.refresh();
       setPixelList((prev) => prev.filter((pixel) => pixel.id !== deleteId));
       setDeleteId(null);
@@ -107,6 +112,7 @@ export function PixelManager({ initialPixels }: { initialPixels: Pixel[] }) {
       <div className="mb-4 flex justify-stretch sm:mb-6 sm:justify-end">
         <button
           onClick={() => setShowForm(!showForm)}
+          data-tour="tour-add-pixel"
           className="w-full bg-accent px-4 py-2.5 text-sm text-white sm:w-auto sm:py-2"
         >
           {showForm ? "Cancel" : "Add Pixel"}
@@ -198,13 +204,13 @@ export function PixelManager({ initialPixels }: { initialPixels: Pixel[] }) {
       )}
 
       {pixelList.length === 0 ? (
-        <p className="text-sm text-muted">
+        <p className="text-sm text-muted" data-tour="tour-pixels-list">
           No tracking pixels configured yet. Add one to get started.
         </p>
       ) : (
         <>
           {/* Mobile cards */}
-          <div className="space-y-3 md:hidden">
+          <div className="space-y-3 md:hidden" data-tour="tour-pixels-list">
             {pixelList.map((pixel) => (
               <div
                 key={pixel.id}
@@ -241,7 +247,7 @@ export function PixelManager({ initialPixels }: { initialPixels: Pixel[] }) {
           </div>
 
           {/* Desktop table */}
-          <div className="hidden overflow-hidden rounded-sm bg-card shadow-sm md:block">
+          <div className="hidden overflow-hidden rounded-sm bg-card shadow-sm md:block" data-tour="tour-pixels-list">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border text-left text-muted">

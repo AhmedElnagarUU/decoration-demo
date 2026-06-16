@@ -2,6 +2,7 @@ import { AboutSection } from "@/features/home/components/AboutSection";
 import { CategoryCards } from "@/features/home/components/CategoryCards";
 import { CtaSection } from "@/features/home/components/CtaSection";
 import { HeroSection } from "@/features/home/components/HeroSection";
+import { NewsletterSection } from "@/features/home/components/NewsletterSection";
 import { OurWorkSection } from "@/features/home/components/OurWorkSection";
 import { ServicesSection } from "@/features/home/components/ServicesSection";
 import { ShowcaseSection } from "@/features/home/components/ShowcaseSection";
@@ -9,6 +10,8 @@ import { StatsSection } from "@/features/home/components/StatsSection";
 import { TestimonialsSection } from "@/features/home/components/TestimonialsSection";
 import { data } from "@/lib/data";
 import { setRequestLocale } from "next-intl/server";
+
+export const dynamic = "force-dynamic";
 
 export default async function HomePage({
   params,
@@ -30,6 +33,7 @@ export default async function HomePage({
       <ServicesSection />
       <StatsSection />
       <TestimonialsSection />
+      <NewsletterSection />
       <CtaSection locale={locale} />
     </>
   );

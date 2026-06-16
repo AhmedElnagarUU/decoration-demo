@@ -9,9 +9,13 @@ export const data = dataLayer;
 export type {
   Project,
   Banner,
-  AnalyticsEvent,
-  AnalyticsSummary,
+  Inquiry,
+  InquiryStatus,
+  InquirySource,
+  SocialLink,
+  SocialPlatform,
   Pixel,
   PublicPixel,
   PixelPlatform,
+  PrivacyPolicy,
 } from "./types";

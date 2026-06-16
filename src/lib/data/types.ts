@@ -39,12 +39,37 @@ export interface Banner {
   createdAt: string;
 }
 
-export interface AnalyticsEvent {
+export type InquiryStatus = "new" | "read" | "archived";
+
+export type InquirySource = "contact" | "newsletter";
+
+export interface Inquiry {
   id: string;
-  page: string;
-  referrer: string;
-  visitorId: string;
-  timestamp: string;
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  source: InquirySource;
+  status: InquiryStatus;
+  createdAt: string;
+}
+
+export type SocialPlatform =
+  | "instagram"
+  | "pinterest"
+  | "linkedin"
+  | "facebook"
+  | "tiktok"
+  | "youtube"
+  | "x"
+  | "whatsapp";
+
+export interface SocialLink {
+  id: string;
+  platform: SocialPlatform;
+  label: string;
+  url: string;
+  enabled: boolean;
 }
 
 export interface CreateProjectInput {
@@ -70,20 +95,26 @@ export interface CreateBannerInput {
   expiresAt?: string;
 }
 
-export interface TrackAnalyticsInput {
-  page: string;
-  referrer: string;
-  visitorId: string;
-  timestamp: string;
+export interface CreateInquiryInput {
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+  source?: InquirySource;
 }
 
-export interface AnalyticsSummary {
-  totalPageViews: number;
-  uniqueVisitors: number;
-  pageViews: { page: string; count: number }[];
-  referrers: { source: string; count: number }[];
-  mostVisitedPage: string;
+export interface UpdateInquiryInput {
+  status?: InquiryStatus;
 }
+
+export interface CreateSocialLinkInput {
+  platform: SocialPlatform;
+  label: string;
+  url: string;
+  enabled: boolean;
+}
+
+export interface UpdateSocialLinkInput extends Partial<CreateSocialLinkInput> {}
 
 export type PixelPlatform =
   | "meta"
@@ -119,3 +150,14 @@ export interface CreatePixelInput {
 }
 
 export interface UpdatePixelInput extends Partial<CreatePixelInput> {}
+
+export interface PrivacyPolicy {
+  content: LocalizedString;
+  published: boolean;
+  updatedAt: string;
+}
+
+export interface UpdatePrivacyPolicyInput {
+  content?: LocalizedString;
+  published?: boolean;
+}

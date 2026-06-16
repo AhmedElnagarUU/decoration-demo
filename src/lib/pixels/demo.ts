@@ -28,6 +28,14 @@ function toPublicPixel(pixel: Pixel): PublicPixel {
   };
 }
 
+export function getDemoPixelsSnapshot(): Pixel[] {
+  return [...getStore()];
+}
+
+export function hydrateDemoPixels(pixelList: Pixel[]): void {
+  global.demoPixelStore = pixelList;
+}
+
 export const demoPixels = {
   async getPixels(): Promise<Pixel[]> {
     return [...getStore()];

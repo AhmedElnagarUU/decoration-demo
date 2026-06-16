@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 const IS_DEMO = process.env.NEXT_PUBLIC_APP_MODE === "demo";
 
 const productionClient = createAuthClient({
-  baseURL: process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000",
+  baseURL: process.env.NEXT_PUBLIC_APP_URL ,
   plugins: IS_PHONE_OTP_AVAILABLE ? [phoneNumberClient()] : [],
 });
 

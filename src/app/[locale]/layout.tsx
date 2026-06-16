@@ -1,6 +1,5 @@
 import { IS_PRODUCTION } from "@/lib/config";
 import { pixels } from "@/lib/pixels/service";
-import { AnalyticsTracker } from "@/shared/components/AnalyticsTracker";
 import { Footer } from "@/shared/components/Footer";
 import { LocaleHtmlAttributes } from "@/shared/components/LocaleHtmlAttributes";
 import { MainWithOffset } from "@/shared/components/MainWithOffset";
@@ -40,7 +39,6 @@ export default async function LocaleLayout({
         <SiteHeader />
         <MainWithOffset>{children}</MainWithOffset>
         <Footer />
-        <AnalyticsTracker />
         {enabledPixels.length > 0 && <PixelInjector pixels={enabledPixels} />}
       </NextIntlClientProvider>
     </div>

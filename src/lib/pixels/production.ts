@@ -42,7 +42,7 @@ async function getOrCreateSettings() {
   await connectDB();
   let doc = await SiteSettingsModel.findOne();
   if (!doc) {
-    doc = await SiteSettingsModel.create({ pixels: [] });
+    doc = await SiteSettingsModel.create({ pixels: [], socialLinks: [] });
   }
   return doc;
 }

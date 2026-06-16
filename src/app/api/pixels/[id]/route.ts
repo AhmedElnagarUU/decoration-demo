@@ -1,4 +1,5 @@
 import { pixels } from "@/lib/pixels/service";
+import { revalidateContentPaths } from "@/lib/revalidate-content";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -25,6 +26,7 @@ export async function PUT(
     if (!pixel) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
+    revalidateContentPaths();
     return NextResponse.json({ pixel });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -43,5 +45,6 @@ export async function DELETE(
   if (!success) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
+  revalidateContentPaths();
   return NextResponse.json({ success: true });
 }

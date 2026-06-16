@@ -1,4 +1,5 @@
 import { data } from "@/lib/data";
+import { revalidateContentPaths } from "@/lib/revalidate-content";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -34,6 +35,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const parsed = createSchema.parse(body);
     const project = await data.createProject(parsed);
+    revalidateContentPaths();
     return NextResponse.json({ project }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {

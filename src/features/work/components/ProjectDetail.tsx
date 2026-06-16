@@ -2,9 +2,9 @@
 
 import type { Project } from "@/lib/data/types";
 import { ImageLightbox } from "@/shared/components/ImageLightbox";
+import { ProjectCoverImage } from "@/shared/components/ProjectCoverImage";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -26,7 +26,7 @@ export function ProjectDetail({
   return (
     <article>
       <div className="relative h-[50vh] md:h-[60vh]">
-        <Image
+        <ProjectCoverImage
           src={project.coverImage}
           alt={title}
           fill
@@ -82,7 +82,7 @@ export function ProjectDetail({
                 onClick={() => setLightboxIndex(i)}
                 className="relative aspect-[4/3] overflow-hidden rounded-sm"
               >
-                <Image
+                <ProjectCoverImage
                   src={img}
                   alt={`${title} ${i + 1}`}
                   fill
@@ -107,7 +107,7 @@ export function ProjectDetail({
                   className="group overflow-hidden rounded-sm shadow-sm"
                 >
                   <div className="relative aspect-[4/3]">
-                    <Image
+                    <ProjectCoverImage
                       src={p.coverImage}
                       alt={locale === "ar" ? p.title.ar : p.title.en}
                       fill

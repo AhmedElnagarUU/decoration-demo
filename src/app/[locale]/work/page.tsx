@@ -3,6 +3,8 @@ import { data } from "@/lib/data";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 export default async function WorkPage({
   params,
 }: {

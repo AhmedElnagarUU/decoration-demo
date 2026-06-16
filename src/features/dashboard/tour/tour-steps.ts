@@ -7,7 +7,7 @@ const overviewSteps: TourStep[] = [
     target: ["tour-nav-sidebar", "tour-nav-mobile"],
     title: "Dashboard navigation",
     description:
-      "Move between Overview, Projects, Banners, and Analytics. On mobile, use the bottom bar or the menu button.",
+      "Move between Overview, Projects, Banners, Inquiries, Social Links, and Pixels. On mobile, use the bottom bar or the menu button.",
     placement: "right",
   },
   {
@@ -15,7 +15,7 @@ const overviewSteps: TourStep[] = [
     target: "tour-stats-panel",
     title: "Key metrics",
     description:
-      "A quick snapshot of your portfolio size, page views, unique visitors, and most visited page.",
+      "A quick snapshot of your portfolio size, published projects, and new contact inquiries.",
     placement: "bottom",
   },
   {
@@ -101,21 +101,40 @@ const bannersSteps: TourStep[] = [
   },
 ];
 
-const analyticsSteps: TourStep[] = [
+const inquiriesSteps: TourStep[] = [
   {
-    id: "analytics-stats",
-    target: "tour-analytics-stats",
-    title: "Traffic overview",
+    id: "inquiries-filters",
+    target: "tour-inquiries-filters",
+    title: "Filter inquiries",
     description:
-      "See total page views, unique visitors, and the most popular page.",
+      "View all leads or filter by new, read, and archived status.",
     placement: "bottom",
   },
   {
-    id: "analytics-charts",
-    target: "tour-analytics-charts",
-    title: "Charts & breakdowns",
+    id: "inquiries-list",
+    target: "tour-inquiries-list",
+    title: "Lead inbox",
     description:
-      "Explore page popularity and referrer sources over time.",
+      "Contact form submissions and newsletter signups appear here. Tap a row to read the full message and update its status.",
+    placement: "top",
+  },
+];
+
+const socialSteps: TourStep[] = [
+  {
+    id: "add-social-link",
+    target: "tour-add-social-link",
+    title: "Add a social link",
+    description:
+      "Choose a platform, label, and URL. Enabled links appear in the site footer.",
+    placement: "bottom",
+  },
+  {
+    id: "social-links-list",
+    target: "tour-social-links-list",
+    title: "Manage links",
+    description:
+      "Show or hide links on the public site, edit details, or remove ones you no longer need.",
     placement: "top",
   },
 ];
@@ -131,12 +150,33 @@ const securitySteps: TourStep[] = [
   },
 ];
 
+const pixelsSteps: TourStep[] = [
+  {
+    id: "add-pixel",
+    target: "tour-add-pixel",
+    title: "Add a tracking pixel",
+    description:
+      "Click here to open the form. Choose a platform (Meta, Google GA4, Google Ads, TikTok, Snapchat, or GTM), add a label and pixel ID, then enable it.",
+    placement: "bottom",
+  },
+  {
+    id: "pixels-list",
+    target: "tour-pixels-list",
+    title: "Manage pixels",
+    description:
+      "Enable or disable tracking tags, review configured IDs, or remove pixels you no longer need.",
+    placement: "top",
+  },
+];
+
 const stepsByPath: Record<string, TourStep[]> = {
   "/dashboard": overviewSteps,
   "/dashboard/projects": projectsSteps,
   "/dashboard/projects/new": projectFormSteps,
   "/dashboard/banners": bannersSteps,
-  "/dashboard/analytics": analyticsSteps,
+  "/dashboard/inquiries": inquiriesSteps,
+  "/dashboard/social": socialSteps,
+  "/dashboard/pixels": pixelsSteps,
   "/dashboard/security": securitySteps,
 };
 

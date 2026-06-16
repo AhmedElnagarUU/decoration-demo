@@ -54,12 +54,7 @@ export function Navbar() {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8 lg:py-5">
         <Link href={`/${locale}`} className="flex items-center gap-2.5">
-          <motion.div
-            animate={{ color: isTransparent ? "#ffffff" : "#1a1a1a" }}
-            transition={{ duration: 0.35 }}
-          >
-            <LogoMark />
-          </motion.div>
+          <LogoMark />
           <span className="font-serif text-xl font-semibold tracking-[0.15em] uppercase">
             {SITE_NAME}
           </span>

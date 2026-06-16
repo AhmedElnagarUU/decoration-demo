@@ -1,6 +1,8 @@
 import { PixelManager } from "@/features/dashboard/pixels/components/PixelManager";
 import { pixels } from "@/lib/pixels/service";
 
+export const dynamic = "force-dynamic";
+
 export default async function PixelsPage() {
   const pixelList = await pixels.getPixels();
 

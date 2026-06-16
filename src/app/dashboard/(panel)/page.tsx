@@ -1,19 +1,23 @@
 import { data } from "@/lib/data";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
-  const [projects, summary] = await Promise.all([
+  const [projects, inquiries] = await Promise.all([
     data.getProjects(),
-    data.getAnalyticsSummary(),
+    data.getInquiries(),
   ]);
 
   const recent = projects.slice(0, 5);
+  const publishedCount = projects.filter((p) => p.status === "published").length;
+  const newInquiries = inquiries.filter((i) => i.status === "new").length;
 
   const stats = [
     { label: "Total Projects", value: projects.length },
-    { label: "Page Views", value: summary.totalPageViews },
-    { label: "Unique Visitors", value: summary.uniqueVisitors },
-    { label: "Most Visited", value: summary.mostVisitedPage },
+    { label: "Published", value: publishedCount },
+    { label: "New Inquiries", value: newInquiries },
+    { label: "Total Inquiries", value: inquiries.length },
   ];
 
   return (

@@ -1,4 +1,5 @@
 import { data } from "@/lib/data";
+import { revalidateContentPaths } from "@/lib/revalidate-content";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -19,6 +20,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const parsed = bannerSchema.parse(body);
     const banner = await data.createBanner(parsed);
+    revalidateContentPaths();
     return NextResponse.json({ banner }, { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
