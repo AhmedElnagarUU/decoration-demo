@@ -3,78 +3,30 @@ import type {
   PrivacyPolicy,
   UpdatePrivacyPolicyInput,
 } from "@/lib/data/types";
-import {
-  getLocalStorageItem,
-  setLocalStorageItem,
-} from "@/lib/local-storage";
 
-const STORAGE_KEY = "dc_privacy_policy";
-
-declare global {
-  // eslint-disable-next-line no-var
-  var demoPrivacyPolicyStore: PrivacyPolicy | undefined;
-}
-
-function getServerStore(): PrivacyPolicy {
-  if (!global.demoPrivacyPolicyStore) {
-    global.demoPrivacyPolicyStore = { ...DEMO_PRIVACY_POLICY };
-  }
-  return global.demoPrivacyPolicyStore;
-}
-
-function readClientStore(): PrivacyPolicy {
-  if (typeof window === "undefined") return getServerStore();
-
-  const stored = getLocalStorageItem(STORAGE_KEY);
-  return stored ? JSON.parse(stored) : { ...DEMO_PRIVACY_POLICY };
-}
-
-function writeClientStore(policy: PrivacyPolicy): void {
-  if (typeof window === "undefined") return;
-  setLocalStorageItem(STORAGE_KEY, JSON.stringify(policy));
-}
-
-function getStore(): PrivacyPolicy {
-  if (typeof window !== "undefined") return readClientStore();
-  return getServerStore();
-}
-
-function persistStore(policy: PrivacyPolicy): void {
-  if (typeof window !== "undefined") {
-    writeClientStore(policy);
-  } else {
-    global.demoPrivacyPolicyStore = policy;
-  }
-}
-
-export function getDemoPrivacyPolicySnapshot(): PrivacyPolicy {
-  return { ...getServerStore() };
-}
-
-export function hydrateDemoPrivacyPolicy(policy: PrivacyPolicy): void {
-  global.demoPrivacyPolicyStore = policy;
-}
-
+/** Demo server reads return seed data only. Client uses localStorage via local-store.ts. */
 export const demoPrivacyPolicy = {
   async getPrivacyPolicy(): Promise<PrivacyPolicy> {
-    return { ...getStore() };
+    return { ...DEMO_PRIVACY_POLICY };
   },
 
   async getPublishedPrivacyPolicy(): Promise<PrivacyPolicy | null> {
-    const policy = getStore();
-    return policy.published ? { ...policy } : null;
+    return DEMO_PRIVACY_POLICY.published ? { ...DEMO_PRIVACY_POLICY } : null;
   },
 
-  async updatePrivacyPolicy(
-    input: UpdatePrivacyPolicyInput,
-  ): Promise<PrivacyPolicy> {
-    const current = getStore();
-    const updated: PrivacyPolicy = {
-      content: input.content ?? current.content,
-      published: input.published ?? current.published,
+  async updatePrivacyPolicy(input: UpdatePrivacyPolicyInput): Promise<PrivacyPolicy> {
+    return {
+      content: input.content ?? DEMO_PRIVACY_POLICY.content,
+      published: input.published ?? DEMO_PRIVACY_POLICY.published,
       updatedAt: new Date().toISOString(),
     };
-    persistStore(updated);
-    return updated;
   },
 };
+
+export function getDemoPrivacyPolicySnapshot(): PrivacyPolicy {
+  return { ...DEMO_PRIVACY_POLICY };
+}
+
+export function hydrateDemoPrivacyPolicy(_policy: PrivacyPolicy): void {
+  // no-op: demo data is localStorage-only
+}

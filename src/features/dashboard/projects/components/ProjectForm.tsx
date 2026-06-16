@@ -1,7 +1,11 @@
 "use client";
 
 import { IS_DEMO } from "@/lib/config";
-import { syncDemoStoreFromServer } from "@/lib/data/demo-client-sync";
+import {
+  createLocalProject,
+  deleteLocalProject,
+  updateLocalProject,
+} from "@/lib/demo/local-store";
 import type { Project } from "@/lib/data/types";
 import { formatApiError } from "@/lib/utils/api-error";
 import { generateSlug } from "@/lib/utils/slug";
@@ -142,6 +146,16 @@ export function ProjectForm({ project }: ProjectFormProps) {
     };
 
     try {
+      if (IS_DEMO) {
+        if (project) {
+          updateLocalProject(project.id, payload);
+        } else {
+          createLocalProject(payload);
+        }
+        router.push("/dashboard/projects");
+        return;
+      }
+
       const url = project ? `/api/projects/${project.id}` : "/api/projects";
       const method = project ? "PUT" : "POST";
 
@@ -154,10 +168,6 @@ export function ProjectForm({ project }: ProjectFormProps) {
       if (!res.ok) {
         const data = await res.json();
         throw new Error(formatApiError(data.error));
-      }
-
-      if (IS_DEMO) {
-        await syncDemoStoreFromServer();
       }
 
       router.push("/dashboard/projects");

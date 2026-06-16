@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/shared/components/Button";
+import { IS_DEMO } from "@/lib/config";
+import { createLocalInquiry } from "@/lib/demo/local-store";
 import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -18,6 +20,18 @@ export function NewsletterSection() {
     setError("");
 
     try {
+      if (IS_DEMO) {
+        createLocalInquiry({
+          name: email.split("@")[0] || "Subscriber",
+          email,
+          message: "Newsletter subscription",
+          source: "newsletter",
+        });
+        setSubmitted(true);
+        setEmail("");
+        return;
+      }
+
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

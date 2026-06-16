@@ -2,7 +2,12 @@
 
 import type { Pixel, PixelPlatform } from "@/lib/data/types";
 import { IS_DEMO } from "@/lib/config";
-import { syncDemoStoreFromServer } from "@/lib/data/demo-client-sync";
+import { useDemoPixels } from "@/lib/demo/hooks";
+import {
+  createLocalPixel,
+  deleteLocalPixel,
+  updateLocalPixel,
+} from "@/lib/demo/local-store";
 import { ConfirmDialog } from "@/shared/components/ConfirmDialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,7 +39,9 @@ function platformIdLabel(platform: PixelPlatform): string {
 
 export function PixelManager({ initialPixels }: { initialPixels: Pixel[] }) {
   const router = useRouter();
-  const [pixelList, setPixelList] = useState(initialPixels);
+  const demoPixels = useDemoPixels(initialPixels);
+  const [prodPixels, setProdPixels] = useState(initialPixels);
+  const pixelList = IS_DEMO ? demoPixels : prodPixels;
   const [showForm, setShowForm] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -47,22 +54,36 @@ export function PixelManager({ initialPixels }: { initialPixels: Pixel[] }) {
 
   async function refreshPixels() {
     const data = await fetch("/api/pixels").then((r) => r.json());
-    setPixelList(data.pixels);
+    setProdPixels(data.pixels);
   }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
+    const payload = {
+      platform,
+      label,
+      pixelId,
+      enabled,
+      accessToken: accessToken || undefined,
+      testEventCode: testEventCode || undefined,
+    };
+
+    if (IS_DEMO) {
+      createLocalPixel(payload);
+      setShowForm(false);
+      setPlatform("meta");
+      setLabel("");
+      setPixelId("");
+      setEnabled(true);
+      setAccessToken("");
+      setTestEventCode("");
+      return;
+    }
+
     const res = await fetch("/api/pixels", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        platform,
-        label,
-        pixelId,
-        enabled,
-        accessToken: accessToken || undefined,
-        testEventCode: testEventCode || undefined,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (res.ok) {
@@ -73,19 +94,22 @@ export function PixelManager({ initialPixels }: { initialPixels: Pixel[] }) {
       setEnabled(true);
       setAccessToken("");
       setTestEventCode("");
-      if (IS_DEMO) await syncDemoStoreFromServer();
       router.refresh();
       await refreshPixels();
     }
   }
 
   async function toggleEnabled(id: string, currentEnabled: boolean) {
+    if (IS_DEMO) {
+      updateLocalPixel(id, { enabled: !currentEnabled });
+      return;
+    }
+
     await fetch(`/api/pixels/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ enabled: !currentEnabled }),
     });
-    if (IS_DEMO) await syncDemoStoreFromServer();
     router.refresh();
     await refreshPixels();
   }
@@ -94,10 +118,13 @@ export function PixelManager({ initialPixels }: { initialPixels: Pixel[] }) {
     if (!deleteId) return;
     setDeleting(true);
     try {
-      await fetch(`/api/pixels/${deleteId}`, { method: "DELETE" });
-      if (IS_DEMO) await syncDemoStoreFromServer();
-      router.refresh();
-      setPixelList((prev) => prev.filter((pixel) => pixel.id !== deleteId));
+      if (IS_DEMO) {
+        deleteLocalPixel(deleteId);
+      } else {
+        await fetch(`/api/pixels/${deleteId}`, { method: "DELETE" });
+        router.refresh();
+        setProdPixels((prev) => prev.filter((pixel) => pixel.id !== deleteId));
+      }
       setDeleteId(null);
     } finally {
       setDeleting(false);

@@ -6,18 +6,6 @@ import type {
   UpdatePixelInput,
 } from "@/lib/data/types";
 
-declare global {
-  // eslint-disable-next-line no-var
-  var demoPixelStore: Pixel[] | undefined;
-}
-
-function getStore(): Pixel[] {
-  if (!global.demoPixelStore) {
-    global.demoPixelStore = [];
-  }
-  return global.demoPixelStore;
-}
-
 function toPublicPixel(pixel: Pixel): PublicPixel {
   return {
     id: pixel.id,
@@ -28,50 +16,33 @@ function toPublicPixel(pixel: Pixel): PublicPixel {
   };
 }
 
-export function getDemoPixelsSnapshot(): Pixel[] {
-  return [...getStore()];
-}
-
-export function hydrateDemoPixels(pixelList: Pixel[]): void {
-  global.demoPixelStore = pixelList;
-}
-
+/** Demo server reads return empty; client uses localStorage via local-store.ts. */
 export const demoPixels = {
   async getPixels(): Promise<Pixel[]> {
-    return [...getStore()];
+    return [];
   },
 
   async getEnabledPixels(): Promise<PublicPixel[]> {
-    return getStore()
-      .filter((pixel) => pixel.enabled)
-      .map(toPublicPixel);
+    return [];
   },
 
   async createPixel(input: CreatePixelInput): Promise<Pixel> {
-    const pixel: Pixel = {
-      id: uuidv4(),
-      ...input,
-    };
-    getStore().push(pixel);
-    return pixel;
+    return { id: uuidv4(), ...input };
   },
 
-  async updatePixel(
-    id: string,
-    input: UpdatePixelInput,
-  ): Promise<Pixel | null> {
-    const store = getStore();
-    const index = store.findIndex((pixel) => pixel.id === id);
-    if (index === -1) return null;
-    store[index] = { ...store[index], ...input };
-    return store[index];
+  async updatePixel(id: string, input: UpdatePixelInput): Promise<Pixel | null> {
+    return { id, platform: "meta", label: "", pixelId: "", enabled: false, ...input };
   },
 
-  async deletePixel(id: string): Promise<boolean> {
-    const store = getStore();
-    const index = store.findIndex((pixel) => pixel.id === id);
-    if (index === -1) return false;
-    store.splice(index, 1);
+  async deletePixel(_id: string): Promise<boolean> {
     return true;
   },
 };
+
+export function getDemoPixelsSnapshot(): Pixel[] {
+  return [];
+}
+
+export function hydrateDemoPixels(_pixelList: Pixel[]): void {
+  // no-op: demo data is localStorage-only
+}

@@ -1,15 +1,19 @@
 "use client";
 
 import type { Project } from "@/lib/data/types";
+import { IS_DEMO } from "@/lib/config";
+import { useDemoProjects } from "@/lib/demo/hooks";
 import { Button } from "@/shared/components/Button";
 import { ProjectCoverImage } from "@/shared/components/ProjectCoverImage";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 
-export function OurWorkSection({ projects }: { projects: Project[] }) {
+export function OurWorkSection({ projects: seedProjects }: { projects: Project[] }) {
   const t = useTranslations("home");
   const locale = useLocale();
+  const demoProjects = useDemoProjects(seedProjects, true);
+  const projects = IS_DEMO ? demoProjects : seedProjects;
 
   return (
     <section className="bg-card py-20 lg:py-24">

@@ -5,93 +5,39 @@ import type {
   SocialLink,
   UpdateSocialLinkInput,
 } from "@/lib/data/types";
-import {
-  getLocalStorageItem,
-  setLocalStorageItem,
-} from "@/lib/local-storage";
 
-const STORAGE_KEY = "dc_social_links";
-
-declare global {
-  // eslint-disable-next-line no-var
-  var demoSocialLinkStore: SocialLink[] | undefined;
-}
-
-function getServerStore(): SocialLink[] {
-  if (!global.demoSocialLinkStore) {
-    global.demoSocialLinkStore = [...DEMO_SOCIAL_LINKS];
-  }
-  return global.demoSocialLinkStore;
-}
-
-function readClientStore(): SocialLink[] {
-  if (typeof window === "undefined") return getServerStore();
-
-  const stored = getLocalStorageItem(STORAGE_KEY);
-  return stored ? JSON.parse(stored) : DEMO_SOCIAL_LINKS;
-}
-
-function writeClientStore(links: SocialLink[]): void {
-  if (typeof window === "undefined") return;
-  setLocalStorageItem(STORAGE_KEY, JSON.stringify(links));
-}
-
-function getStore(): SocialLink[] {
-  if (typeof window !== "undefined") return readClientStore();
-  return getServerStore();
-}
-
-function persistStore(links: SocialLink[]): void {
-  if (typeof window !== "undefined") {
-    writeClientStore(links);
-  } else {
-    global.demoSocialLinkStore = links;
-  }
-}
-
-export function getDemoSocialLinksSnapshot(): SocialLink[] {
-  return [...getServerStore()];
-}
-
-export function hydrateDemoSocialLinks(links: SocialLink[]): void {
-  global.demoSocialLinkStore = links;
-}
-
+/** Demo server reads return seed data only. Client uses localStorage via local-store.ts. */
 export const demoSocialLinks = {
   async getSocialLinks(): Promise<SocialLink[]> {
-    return [...getStore()];
+    return [...DEMO_SOCIAL_LINKS];
   },
 
   async getEnabledSocialLinks(): Promise<SocialLink[]> {
-    return getStore().filter((link) => link.enabled);
+    return DEMO_SOCIAL_LINKS.filter((link) => link.enabled);
   },
 
   async createSocialLink(input: CreateSocialLinkInput): Promise<SocialLink> {
-    const store = getStore();
-    const link: SocialLink = { id: uuidv4(), ...input };
-    store.push(link);
-    persistStore(store);
-    return link;
+    return { id: uuidv4(), ...input };
   },
 
   async updateSocialLink(
     id: string,
     input: UpdateSocialLinkInput,
   ): Promise<SocialLink | null> {
-    const store = getStore();
-    const index = store.findIndex((link) => link.id === id);
-    if (index === -1) return null;
-    store[index] = { ...store[index], ...input };
-    persistStore(store);
-    return store[index];
+    const existing = DEMO_SOCIAL_LINKS.find((link) => link.id === id);
+    if (!existing) return null;
+    return { ...existing, ...input };
   },
 
-  async deleteSocialLink(id: string): Promise<boolean> {
-    const store = getStore();
-    const index = store.findIndex((link) => link.id === id);
-    if (index === -1) return false;
-    store.splice(index, 1);
-    persistStore(store);
+  async deleteSocialLink(_id: string): Promise<boolean> {
     return true;
   },
 };
+
+export function getDemoSocialLinksSnapshot(): SocialLink[] {
+  return [...DEMO_SOCIAL_LINKS];
+}
+
+export function hydrateDemoSocialLinks(_links: SocialLink[]): void {
+  // no-op: demo data is localStorage-only
+}

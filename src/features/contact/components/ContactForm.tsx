@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/shared/components/Button";
+import { IS_DEMO } from "@/lib/config";
+import { createLocalInquiry } from "@/lib/demo/local-store";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
@@ -17,6 +19,19 @@ export function ContactForm() {
     const formData = new FormData(form);
 
     try {
+      if (IS_DEMO) {
+        createLocalInquiry({
+          name: String(formData.get("name") ?? ""),
+          email: String(formData.get("email") ?? ""),
+          phone: String(formData.get("phone") ?? "") || undefined,
+          message: String(formData.get("message") ?? ""),
+          source: "contact",
+        });
+        setSubmitted(true);
+        form.reset();
+        return;
+      }
+
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

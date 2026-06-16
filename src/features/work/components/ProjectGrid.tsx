@@ -1,6 +1,8 @@
 "use client";
 
 import type { Project } from "@/lib/data/types";
+import { IS_DEMO } from "@/lib/config";
+import { useDemoProjects } from "@/lib/demo/hooks";
 import { ProjectCoverImage } from "@/shared/components/ProjectCoverImage";
 import { motion } from "framer-motion";
 import { useLocale, useTranslations } from "next-intl";
@@ -18,9 +20,11 @@ const CATEGORIES = [
   "Other",
 ] as const;
 
-export function ProjectGrid({ projects }: { projects: Project[] }) {
+export function ProjectGrid({ projects: seedProjects }: { projects: Project[] }) {
   const t = useTranslations("work");
   const locale = useLocale();
+  const demoProjects = useDemoProjects(seedProjects, true);
+  const projects = IS_DEMO ? demoProjects : seedProjects;
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") ?? "All";
   const [activeCategory, setActiveCategory] = useState(initialCategory);

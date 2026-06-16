@@ -1,5 +1,7 @@
 "use client";
 
+import { IS_DEMO } from "@/lib/config";
+import { useDemoActiveBanner } from "@/lib/demo/hooks";
 import { X } from "lucide-react";
 import { useLocale } from "next-intl";
 import Link from "next/link";
@@ -13,17 +15,21 @@ interface BannerData {
 
 export function AnnouncementBanner() {
   const locale = useLocale();
-  const [banner, setBanner] = useState<BannerData | null>(null);
+  const demoBanner = useDemoActiveBanner();
+  const [apiBanner, setApiBanner] = useState<BannerData | null>(null);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
+    if (IS_DEMO) return;
     fetch("/api/banners/active")
       .then((r) => r.json())
       .then((data) => {
-        if (data.banner) setBanner(data.banner);
+        if (data.banner) setApiBanner(data.banner);
       })
       .catch(() => {});
   }, []);
+
+  const banner = IS_DEMO ? demoBanner : apiBanner;
 
   if (!banner || dismissed) return null;
 

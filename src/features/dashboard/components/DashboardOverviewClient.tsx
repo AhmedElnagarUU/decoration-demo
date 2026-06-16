@@ -1,19 +1,18 @@
-import { DashboardOverviewClient } from "@/features/dashboard/components/DashboardOverviewClient";
-import { IS_DEMO } from "@/lib/config";
-import { data } from "@/lib/data";
+"use client";
+
+import type { Inquiry, Project } from "@/lib/data/types";
+import { useDemoInquiries, useDemoProjects } from "@/lib/demo/hooks";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
-export default async function DashboardPage() {
-  const [projects, inquiries] = await Promise.all([
-    data.getProjects(),
-    data.getInquiries(),
-  ]);
-
-  if (IS_DEMO) {
-    return <DashboardOverviewClient seedProjects={projects} seedInquiries={inquiries} />;
-  }
+export function DashboardOverviewClient({
+  seedProjects,
+  seedInquiries,
+}: {
+  seedProjects: Project[];
+  seedInquiries: Inquiry[];
+}) {
+  const projects = useDemoProjects(seedProjects);
+  const inquiries = useDemoInquiries(seedInquiries);
 
   const recent = projects.slice(0, 5);
   const publishedCount = projects.filter((p) => p.status === "published").length;
@@ -67,7 +66,6 @@ export default async function DashboardPage() {
           <h2 className="font-medium">Recent Projects</h2>
         </div>
 
-        {/* Mobile card list */}
         <div className="divide-y divide-border md:hidden">
           {recent.map((project) => (
             <Link
@@ -88,36 +86,24 @@ export default async function DashboardPage() {
                 </span>
               </div>
               <p className="mt-1 text-sm text-muted">{project.category}</p>
-              <p className="mt-1 text-xs text-muted">
-                {new Date(project.createdAt).toLocaleDateString()}
-              </p>
             </Link>
           ))}
         </div>
 
-        {/* Desktop table */}
-        <div className="hidden overflow-x-auto md:block">
+        <div className="hidden md:block">
           <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-left text-muted">
-                <th className="px-6 py-3">Name</th>
-                <th className="px-6 py-3">Category</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Date</th>
-              </tr>
-            </thead>
             <tbody>
               {recent.map((project) => (
-                <tr key={project.id} className="border-b border-border">
+                <tr key={project.id} className="border-b border-border last:border-0">
                   <td className="px-6 py-3">
                     <Link
                       href={`/dashboard/projects/${project.id}/edit`}
-                      className="hover:text-accent"
+                      className="font-medium hover:text-accent"
                     >
                       {project.title.en}
                     </Link>
                   </td>
-                  <td className="px-6 py-3">{project.category}</td>
+                  <td className="px-6 py-3 text-muted">{project.category}</td>
                   <td className="px-6 py-3">
                     <span
                       className={`inline-block px-2 py-0.5 text-xs uppercase ${

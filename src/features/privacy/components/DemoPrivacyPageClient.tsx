@@ -1,10 +1,9 @@
-import { DemoPrivacyPageClient } from "@/features/privacy/components/DemoPrivacyPageClient";
-import { IS_DEMO } from "@/lib/config";
-import { privacyPolicy } from "@/lib/privacy-policy/service";
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { notFound } from "next/navigation";
+"use client";
 
-export const dynamic = "force-dynamic";
+import type { PrivacyPolicy } from "@/lib/data/types";
+import { useDemoPublishedPrivacyPolicy } from "@/lib/demo/hooks";
+import { useTranslations } from "next-intl";
+import { notFound } from "next/navigation";
 
 function renderParagraphs(text: string) {
   return text
@@ -13,20 +12,15 @@ function renderParagraphs(text: string) {
     .filter(Boolean);
 }
 
-export default async function PrivacyPage({
-  params,
+export function DemoPrivacyPageClient({
+  locale,
+  seedPolicy,
 }: {
-  params: Promise<{ locale: string }>;
+  locale: string;
+  seedPolicy: PrivacyPolicy | null;
 }) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations("privacyPage");
-
-  const policy = await privacyPolicy.getPublishedPrivacyPolicy();
-
-  if (IS_DEMO) {
-    return <DemoPrivacyPageClient locale={locale} seedPolicy={policy} />;
-  }
+  const t = useTranslations("privacyPage");
+  const policy = useDemoPublishedPrivacyPolicy(seedPolicy);
 
   if (!policy) {
     notFound();

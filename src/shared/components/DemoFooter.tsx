@@ -1,27 +1,25 @@
-import { IS_DEMO } from "@/lib/config";
-import { DemoFooter } from "@/shared/components/DemoFooter";
+"use client";
+
 import { SITE_NAME } from "@/lib/constants";
-import { privacyPolicy } from "@/lib/privacy-policy/service";
-import { socialLinks } from "@/lib/social-links/service";
+import { useDemoPublishedPrivacyPolicy, useDemoSocialLinks } from "@/lib/demo/hooks";
+import type { PrivacyPolicy, SocialLink } from "@/lib/data/types";
 import { LogoMark } from "@/shared/components/LogoMark";
-import { getLocale, getTranslations } from "next-intl/server";
+import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 
-export async function Footer() {
-  const locale = await getLocale();
-  const t = await getTranslations("footer");
-  const nav = await getTranslations("nav");
+export function DemoFooter({
+  seedLinks,
+  seedPolicy,
+}: {
+  seedLinks: SocialLink[];
+  seedPolicy: PrivacyPolicy | null;
+}) {
+  const locale = useLocale();
+  const t = useTranslations("footer");
+  const nav = useTranslations("nav");
+  const enabledLinks = useDemoSocialLinks(seedLinks);
+  const publishedPolicy = useDemoPublishedPrivacyPolicy(seedPolicy);
 
-  if (IS_DEMO) {
-    const [enabledLinks, publishedPolicy] = await Promise.all([
-      socialLinks.getEnabledSocialLinks(),
-      privacyPolicy.getPublishedPrivacyPolicy(),
-    ]);
-    return <DemoFooter seedLinks={enabledLinks} seedPolicy={publishedPolicy} />;
-  }
-
-  const enabledLinks = await socialLinks.getEnabledSocialLinks();
-  const publishedPolicy = await privacyPolicy.getPublishedPrivacyPolicy();
   return (
     <footer className="border-t border-border bg-card">
       <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">

@@ -1,4 +1,6 @@
+import { DemoProjectPageClient } from "@/features/work/components/DemoProjectPageClient";
 import { ProjectDetail } from "@/features/work/components/ProjectDetail";
+import { IS_DEMO } from "@/lib/config";
 import { data } from "@/lib/data";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -14,6 +16,11 @@ export default async function ProjectPage({
   setRequestLocale(locale);
 
   const project = await data.getProjectBySlug(slug);
+
+  if (IS_DEMO) {
+    return <DemoProjectPageClient slug={slug} seedProject={project} />;
+  }
+
   if (!project || project.status !== "published") {
     notFound();
   }

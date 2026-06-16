@@ -1,5 +1,4 @@
 import { DashboardShell } from "@/features/dashboard/components/DashboardShell";
-import { DemoStoreHydrator } from "@/features/dashboard/components/DemoStoreHydrator";
 import { DashboardTourProvider } from "@/features/dashboard/tour/DashboardTour";
 
 export default function DashboardPanelLayout({
@@ -9,7 +8,6 @@ export default function DashboardPanelLayout({
 }) {
   return (
     <DashboardTourProvider>
-      <DemoStoreHydrator />
       <DashboardShell>{children}</DashboardShell>
     </DashboardTourProvider>
   );

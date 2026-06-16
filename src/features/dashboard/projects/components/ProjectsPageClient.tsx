@@ -1,21 +1,16 @@
-import { ProjectsPageClient } from "@/features/dashboard/projects/components/ProjectsPageClient";
-import { IS_DEMO } from "@/lib/config";
-import { data } from "@/lib/data";
+"use client";
+
+import type { Project } from "@/lib/data/types";
+import { useDemoProjects } from "@/lib/demo/hooks";
 import { DeleteProjectButton } from "@/features/dashboard/projects/components/DeleteProjectButton";
 import { ProjectCoverImage } from "@/shared/components/ProjectCoverImage";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
-
-export default async function ProjectsPage() {
-  const projects = await data.getProjects();
-
-  if (IS_DEMO) {
-    return <ProjectsPageClient seedProjects={projects} />;
-  }
+export function ProjectsPageClient({ seedProjects }: { seedProjects: Project[] }) {
+  const projects = useDemoProjects(seedProjects);
 
   return (
-    <div>
+    <>
       <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-xl font-medium sm:text-2xl">Projects</h1>
         <Link
@@ -138,6 +133,6 @@ export default async function ProjectsPage() {
           </table>
         </div>
       </div>
-    </div>
+    </>
   );
 }

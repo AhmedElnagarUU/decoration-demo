@@ -2,14 +2,21 @@
 
 import type { Banner } from "@/lib/data/types";
 import { IS_DEMO } from "@/lib/config";
-import { syncDemoStoreFromServer } from "@/lib/data/demo-client-sync";
+import { useDemoBanners } from "@/lib/demo/hooks";
+import {
+  createLocalBanner,
+  deleteLocalBanner,
+  updateLocalBanner,
+} from "@/lib/demo/local-store";
 import { ConfirmDialog } from "@/shared/components/ConfirmDialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export function BannerManager({ initialBanners }: { initialBanners: Banner[] }) {
   const router = useRouter();
-  const [banners, setBanners] = useState(initialBanners);
+  const demoBanners = useDemoBanners(initialBanners);
+  const [prodBanners, setProdBanners] = useState(initialBanners);
+  const banners = IS_DEMO ? demoBanners : prodBanners;
   const [showForm, setShowForm] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -21,15 +28,28 @@ export function BannerManager({ initialBanners }: { initialBanners: Banner[] }) 
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
+    const payload = {
+      message: { en: messageEn, ar: messageAr },
+      link: link || undefined,
+      active,
+      expiresAt: expiresAt || undefined,
+    };
+
+    if (IS_DEMO) {
+      createLocalBanner(payload);
+      setShowForm(false);
+      setMessageEn("");
+      setMessageAr("");
+      setLink("");
+      setActive(false);
+      setExpiresAt("");
+      return;
+    }
+
     const res = await fetch("/api/banners", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: { en: messageEn, ar: messageAr },
-        link: link || undefined,
-        active,
-        expiresAt: expiresAt || undefined,
-      }),
+      body: JSON.stringify(payload),
     });
 
     if (res.ok) {
@@ -39,33 +59,39 @@ export function BannerManager({ initialBanners }: { initialBanners: Banner[] }) 
       setLink("");
       setActive(false);
       setExpiresAt("");
-      if (IS_DEMO) await syncDemoStoreFromServer();
       router.refresh();
       const data = await fetch("/api/banners").then((r) => r.json());
-      setBanners(data.banners);
+      setProdBanners(data.banners);
     }
   }
 
   async function toggleActive(id: string, currentActive: boolean) {
+    if (IS_DEMO) {
+      updateLocalBanner(id, { active: !currentActive });
+      return;
+    }
+
     await fetch(`/api/banners/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ active: !currentActive }),
     });
-    if (IS_DEMO) await syncDemoStoreFromServer();
     router.refresh();
     const data = await fetch("/api/banners").then((r) => r.json());
-    setBanners(data.banners);
+    setProdBanners(data.banners);
   }
 
   async function handleDelete() {
     if (!deleteId) return;
     setDeleting(true);
     try {
-      await fetch(`/api/banners/${deleteId}`, { method: "DELETE" });
-      if (IS_DEMO) await syncDemoStoreFromServer();
-      router.refresh();
-      setBanners((prev) => prev.filter((b) => b.id !== deleteId));
+      if (IS_DEMO) {
+        deleteLocalBanner(deleteId);
+      } else {
+        await fetch(`/api/banners/${deleteId}`, { method: "DELETE" });
+        router.refresh();
+        setProdBanners((prev) => prev.filter((b) => b.id !== deleteId));
+      }
       setDeleteId(null);
     } finally {
       setDeleting(false);

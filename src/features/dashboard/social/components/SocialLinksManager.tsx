@@ -2,7 +2,12 @@
 
 import type { SocialLink, SocialPlatform } from "@/lib/data/types";
 import { IS_DEMO } from "@/lib/config";
-import { syncDemoStoreFromServer } from "@/lib/data/demo-client-sync";
+import { useDemoAllSocialLinks } from "@/lib/demo/hooks";
+import {
+  createLocalSocialLink,
+  deleteLocalSocialLink,
+  updateLocalSocialLink,
+} from "@/lib/demo/local-store";
 import { ConfirmDialog } from "@/shared/components/ConfirmDialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -33,7 +38,9 @@ export function SocialLinksManager({
   initialLinks: SocialLink[];
 }) {
   const router = useRouter();
-  const [links, setLinks] = useState(initialLinks);
+  const demoLinks = useDemoAllSocialLinks(initialLinks);
+  const [prodLinks, setProdLinks] = useState(initialLinks);
+  const links = IS_DEMO ? demoLinks : prodLinks;
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -73,16 +80,26 @@ export function SocialLinksManager({
   }
 
   async function refreshLinks() {
-    if (IS_DEMO) await syncDemoStoreFromServer();
     router.refresh();
     const data = await fetch("/api/social-links").then((r) => r.json());
-    setLinks(data.socialLinks);
+    setProdLinks(data.socialLinks);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     const payload = { platform, label, url, enabled };
+
+    if (IS_DEMO) {
+      if (isEditing) {
+        updateLocalSocialLink(editingId!, payload);
+      } else {
+        createLocalSocialLink(payload);
+      }
+      resetForm();
+      return;
+    }
+
     const res = isEditing
       ? await fetch(`/api/social-links/${editingId}`, {
           method: "PUT",
@@ -102,6 +119,11 @@ export function SocialLinksManager({
   }
 
   async function toggleEnabled(id: string, currentEnabled: boolean) {
+    if (IS_DEMO) {
+      updateLocalSocialLink(id, { enabled: !currentEnabled });
+      return;
+    }
+
     await fetch(`/api/social-links/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -114,9 +136,13 @@ export function SocialLinksManager({
     if (!deleteId) return;
     setDeleting(true);
     try {
-      await fetch(`/api/social-links/${deleteId}`, { method: "DELETE" });
-      await refreshLinks();
-      setLinks((prev) => prev.filter((link) => link.id !== deleteId));
+      if (IS_DEMO) {
+        deleteLocalSocialLink(deleteId);
+      } else {
+        await fetch(`/api/social-links/${deleteId}`, { method: "DELETE" });
+        await refreshLinks();
+        setProdLinks((prev) => prev.filter((link) => link.id !== deleteId));
+      }
       if (editingId === deleteId) resetForm();
       setDeleteId(null);
     } finally {

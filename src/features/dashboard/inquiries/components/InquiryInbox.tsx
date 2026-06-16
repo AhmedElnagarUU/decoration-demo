@@ -2,7 +2,11 @@
 
 import type { Inquiry, InquirySource, InquiryStatus } from "@/lib/data/types";
 import { IS_DEMO } from "@/lib/config";
-import { syncDemoStoreFromServer } from "@/lib/data/demo-client-sync";
+import { useDemoInquiries } from "@/lib/demo/hooks";
+import {
+  deleteLocalInquiry,
+  updateLocalInquiry,
+} from "@/lib/demo/local-store";
 import { ConfirmDialog } from "@/shared/components/ConfirmDialog";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -25,12 +29,13 @@ const sourceLabels: Record<InquirySource, string> = {
 
 export function InquiryInbox({ initialInquiries }: { initialInquiries: Inquiry[] }) {
   const router = useRouter();
-  const [inquiries, setInquiries] = useState(
-    initialInquiries.map((inquiry) => ({
-      ...inquiry,
-      source: inquiry.source ?? "contact",
-    })),
-  );
+  const normalizedSeed = initialInquiries.map((inquiry) => ({
+    ...inquiry,
+    source: inquiry.source ?? "contact",
+  }));
+  const demoInquiries = useDemoInquiries(normalizedSeed);
+  const [prodInquiries, setProdInquiries] = useState(normalizedSeed);
+  const inquiries = IS_DEMO ? demoInquiries : prodInquiries;
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
@@ -44,14 +49,18 @@ export function InquiryInbox({ initialInquiries }: { initialInquiries: Inquiry[]
   });
 
   async function updateStatus(id: string, status: InquiryStatus) {
+    if (IS_DEMO) {
+      updateLocalInquiry(id, { status });
+      return;
+    }
+
     await fetch(`/api/inquiries/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     });
-    if (IS_DEMO) await syncDemoStoreFromServer();
     router.refresh();
-    setInquiries((prev) =>
+    setProdInquiries((prev) =>
       prev.map((inquiry) => (inquiry.id === id ? { ...inquiry, status } : inquiry)),
     );
   }
@@ -60,10 +69,13 @@ export function InquiryInbox({ initialInquiries }: { initialInquiries: Inquiry[]
     if (!deleteId) return;
     setDeleting(true);
     try {
-      await fetch(`/api/inquiries/${deleteId}`, { method: "DELETE" });
-      if (IS_DEMO) await syncDemoStoreFromServer();
-      router.refresh();
-      setInquiries((prev) => prev.filter((i) => i.id !== deleteId));
+      if (IS_DEMO) {
+        deleteLocalInquiry(deleteId);
+      } else {
+        await fetch(`/api/inquiries/${deleteId}`, { method: "DELETE" });
+        router.refresh();
+        setProdInquiries((prev) => prev.filter((i) => i.id !== deleteId));
+      }
       setDeleteId(null);
       if (expandedId === deleteId) setExpandedId(null);
     } finally {

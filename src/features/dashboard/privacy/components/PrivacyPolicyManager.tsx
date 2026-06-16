@@ -2,7 +2,7 @@
 
 import type { PrivacyPolicy } from "@/lib/data/types";
 import { IS_DEMO } from "@/lib/config";
-import { syncDemoStoreFromServer } from "@/lib/data/demo-client-sync";
+import { updateLocalPrivacyPolicy } from "@/lib/demo/local-store";
 import { routing } from "@/i18n/routing";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -29,6 +29,16 @@ export function PrivacyPolicyManager({
     setMessage("");
 
     try {
+      if (IS_DEMO) {
+        const updated = updateLocalPrivacyPolicy({
+          content: { en: contentEn, ar: contentAr },
+          published,
+        });
+        setUpdatedAt(updated.updatedAt);
+        setMessage("Privacy policy saved.");
+        return;
+      }
+
       const res = await fetch("/api/privacy-policy", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -46,7 +56,6 @@ export function PrivacyPolicyManager({
       const data = (await res.json()) as { privacyPolicy: PrivacyPolicy };
       setUpdatedAt(data.privacyPolicy.updatedAt);
       setMessage("Privacy policy saved.");
-      if (IS_DEMO) await syncDemoStoreFromServer();
       router.refresh();
     } catch {
       setMessage("Failed to save. Please try again.");
