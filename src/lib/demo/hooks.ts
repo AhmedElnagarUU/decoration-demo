@@ -24,11 +24,15 @@ import {
   getLocalSocialLinks,
 } from "./local-store";
 
-function useDemoRefresh<T>(read: () => T, seed: T): T {
-  const [value, setValue] = useState<T>(seed);
+export type DemoQueryResult<T> = { data: T; ready: boolean };
+
+function useDemoRefresh<T>(read: () => T, seed: T): DemoQueryResult<T> {
+  const [data, setData] = useState<T>(seed);
+  const [ready, setReady] = useState(false);
 
   const refresh = useCallback(() => {
-    setValue(read());
+    setData(read());
+    setReady(true);
   }, [read]);
 
   useEffect(() => {
@@ -37,15 +41,18 @@ function useDemoRefresh<T>(read: () => T, seed: T): T {
     return () => window.removeEventListener(DEMO_STORE_CHANGED, refresh);
   }, [refresh]);
 
-  return value;
+  return { data, ready };
 }
 
 export function useDemoProjects(seed: Project[], publishedOnly = false): Project[] {
   const read = useCallback(() => getLocalProjects(publishedOnly), [publishedOnly]);
-  return useDemoRefresh(read, seed);
+  return useDemoRefresh(read, seed).data;
 }
 
-export function useDemoProjectById(id: string, seed: Project | null): Project | null {
+export function useDemoProjectById(
+  id: string,
+  seed: Project | null,
+): DemoQueryResult<Project | null> {
   const read = useCallback(() => getLocalProjectById(id) ?? seed, [id, seed]);
   return useDemoRefresh(read, seed);
 }
@@ -53,49 +60,49 @@ export function useDemoProjectById(id: string, seed: Project | null): Project | 
 export function useDemoProjectBySlug(
   slug: string,
   seed: Project | null,
-): Project | null {
+): DemoQueryResult<Project | null> {
   const read = useCallback(() => getLocalProjectBySlug(slug) ?? seed, [slug, seed]);
   return useDemoRefresh(read, seed);
 }
 
 export function useDemoBanners(seed: Banner[]): Banner[] {
   const read = useCallback(() => getLocalBanners(), []);
-  return useDemoRefresh(read, seed);
+  return useDemoRefresh(read, seed).data;
 }
 
 export function useDemoActiveBanner(): Banner | null {
   const read = useCallback(() => getLocalActiveBanner(), []);
-  return useDemoRefresh(read, null);
+  return useDemoRefresh(read, null).data;
 }
 
 export function useDemoInquiries(seed: Inquiry[]): Inquiry[] {
   const read = useCallback(() => getLocalInquiries(), []);
-  return useDemoRefresh(read, seed);
+  return useDemoRefresh(read, seed).data;
 }
 
 export function useDemoPixels(seed: Pixel[]): Pixel[] {
   const read = useCallback(() => getLocalPixels(), []);
-  return useDemoRefresh(read, seed);
+  return useDemoRefresh(read, seed).data;
 }
 
 export function useDemoSocialLinks(seed: SocialLink[]): SocialLink[] {
   const read = useCallback(() => getLocalEnabledSocialLinks(), []);
-  return useDemoRefresh(read, seed);
+  return useDemoRefresh(read, seed).data;
 }
 
 export function useDemoAllSocialLinks(seed: SocialLink[]): SocialLink[] {
   const read = useCallback(() => getLocalSocialLinks(), []);
-  return useDemoRefresh(read, seed);
+  return useDemoRefresh(read, seed).data;
 }
 
 export function useDemoPrivacyPolicy(seed: PrivacyPolicy): PrivacyPolicy {
   const read = useCallback(() => getLocalPrivacyPolicy(), []);
-  return useDemoRefresh(read, seed);
+  return useDemoRefresh(read, seed).data;
 }
 
 export function useDemoPublishedPrivacyPolicy(
   seed: PrivacyPolicy | null,
 ): PrivacyPolicy | null {
   const read = useCallback(() => getLocalPublishedPrivacyPolicy(), []);
-  return useDemoRefresh(read, seed);
+  return useDemoRefresh(read, seed).data;
 }

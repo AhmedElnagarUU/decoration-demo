@@ -12,8 +12,12 @@ export function DemoProjectPageClient({
   slug: string;
   seedProject: Project | null;
 }) {
-  const project = useDemoProjectBySlug(slug, seedProject);
+  const { data: project, ready } = useDemoProjectBySlug(slug, seedProject);
   const allProjects = useDemoProjects([], true);
+
+  if (!ready) {
+    return <div className="min-h-[60vh] animate-pulse bg-background" />;
+  }
 
   if (!project || project.status !== "published") {
     notFound();

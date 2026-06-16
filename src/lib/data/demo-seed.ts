@@ -63,7 +63,7 @@ export const DEMO_PROJECTS: Project[] = [
       "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
-      "https://images.unsplash.com/photo-1616594039964-40891a910a20?w=800&q=80",
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&q=80",
     ],
     tags: ["bedroom", "neutral"],
     createdAt: "2024-03-20T00:00:00.000Z",

@@ -12,7 +12,16 @@ export function EditProjectPageClient({
   id: string;
   seedProject: Project | null;
 }) {
-  const project = useDemoProjectById(id, seedProject);
+  const { data: project, ready } = useDemoProjectById(id, seedProject);
+
+  if (!ready) {
+    return (
+      <div>
+        <h1 className="mb-8 text-2xl font-medium">Edit Project</h1>
+        <div className="h-96 max-w-2xl animate-pulse rounded bg-card" />
+      </div>
+    );
+  }
 
   if (!project) {
     notFound();
