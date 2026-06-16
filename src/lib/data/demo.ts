@@ -1,4 +1,8 @@
 import { buildAnalyticsSummary } from "@/lib/analytics/summary";
+import {
+  getLocalStorageItem,
+  setLocalStorageItem,
+} from "@/lib/local-storage";
 import { v4 as uuidv4 } from "uuid";
 import { DEMO_BANNERS, DEMO_PROJECTS } from "./demo-seed";
 import type {
@@ -43,9 +47,9 @@ function getServerStore(): DemoStore {
 function readClientStore(): DemoStore {
   if (typeof window === "undefined") return getServerStore();
 
-  const projects = localStorage.getItem(KEYS.projects);
-  const banners = localStorage.getItem(KEYS.banners);
-  const analytics = localStorage.getItem(KEYS.analytics);
+  const projects = getLocalStorageItem(KEYS.projects);
+  const banners = getLocalStorageItem(KEYS.banners);
+  const analytics = getLocalStorageItem(KEYS.analytics);
 
   return {
     projects: projects ? JSON.parse(projects) : DEMO_PROJECTS,
@@ -56,9 +60,9 @@ function readClientStore(): DemoStore {
 
 function writeClientStore(store: DemoStore): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(KEYS.projects, JSON.stringify(store.projects));
-  localStorage.setItem(KEYS.banners, JSON.stringify(store.banners));
-  localStorage.setItem(KEYS.analytics, JSON.stringify(store.analytics));
+  setLocalStorageItem(KEYS.projects, JSON.stringify(store.projects));
+  setLocalStorageItem(KEYS.banners, JSON.stringify(store.banners));
+  setLocalStorageItem(KEYS.analytics, JSON.stringify(store.analytics));
 }
 
 function getStore(): DemoStore {

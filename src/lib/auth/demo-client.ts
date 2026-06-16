@@ -1,3 +1,8 @@
+import {
+  getLocalStorageItem,
+  removeLocalStorageItem,
+  setLocalStorageItem,
+} from "@/lib/local-storage";
 import type { AuthSession, AuthUser } from "./types";
 
 const KEYS = {
@@ -7,25 +12,25 @@ const KEYS = {
 
 export function syncUsersToClient(users: AuthUser[]): void {
   if (typeof window === "undefined") return;
-  localStorage.setItem(KEYS.users, JSON.stringify(users));
+  setLocalStorageItem(KEYS.users, JSON.stringify(users));
 }
 
 export function syncSessionToClient(session: AuthSession | null): void {
   if (typeof window === "undefined") return;
   if (session) {
-    localStorage.setItem(KEYS.session, JSON.stringify(session));
+    setLocalStorageItem(KEYS.session, JSON.stringify(session));
   } else {
-    localStorage.removeItem(KEYS.session);
+    removeLocalStorageItem(KEYS.session);
   }
 }
 
 export function getClientSession(): AuthSession | null {
   if (typeof window === "undefined") return null;
-  const raw = localStorage.getItem(KEYS.session);
+  const raw = getLocalStorageItem(KEYS.session);
   if (!raw) return null;
   const session: AuthSession = JSON.parse(raw);
   if (new Date(session.expiresAt) < new Date()) {
-    localStorage.removeItem(KEYS.session);
+    removeLocalStorageItem(KEYS.session);
     return null;
   }
   return session;
@@ -33,6 +38,6 @@ export function getClientSession(): AuthSession | null {
 
 export function getClientUsers(): AuthUser[] {
   if (typeof window === "undefined") return [];
-  const raw = localStorage.getItem(KEYS.users);
+  const raw = getLocalStorageItem(KEYS.users);
   return raw ? JSON.parse(raw) : [];
 }

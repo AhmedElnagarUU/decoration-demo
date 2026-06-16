@@ -15,8 +15,8 @@ COPY . .
 
 ARG NEXT_PUBLIC_APP_MODE=demo
 ARG NEXT_PUBLIC_APP_URL=https://valor.infinity-demo.online/
-ENV NEXT_PUBLIC_APP_MODE=demo
-ENV NEXT_PUBLIC_APP_URL=https://valor.infinity-demo.online/
+ENV NEXT_PUBLIC_APP_MODE=$NEXT_PUBLIC_APP_MODE
+ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build
@@ -28,6 +28,10 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV HOSTNAME=0.0.0.0
 ENV PORT=3000
+
+# Better Auth — set BETTER_AUTH_SECRET at deploy (docker run -e / compose environment)
+ENV BETTER_AUTH_URL=https://valor.infinity-demo.online/
+ENV BETTER_AUTH_SECRET=D0a3ipChwV8QthdoNXKVt1wL6TfqUvCZ
 
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
