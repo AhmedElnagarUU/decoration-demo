@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# promo video intermediates (final exports live in promo/output/)
+/promo/raw/
+/promo/assets/
