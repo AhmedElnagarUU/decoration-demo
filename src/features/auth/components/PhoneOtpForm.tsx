@@ -5,6 +5,7 @@ import {
   sendPhoneOtp,
   verifyPhoneOtp,
 } from "@/lib/auth/auth-client";
+import { getOtpDeliveryHint, getOtpDeliveryLabel } from "@/lib/config";
 import { normalizePhoneNumber } from "@/lib/auth/phone";
 import { KeyRound, Phone, ShieldCheck } from "lucide-react";
 import { useState } from "react";
@@ -121,9 +122,7 @@ export function PhoneOtpForm({
               className="w-full border border-border py-2.5 pr-4 pl-10 text-sm focus:border-accent focus:outline-none"
             />
           </div>
-          <p className="mt-1.5 text-xs text-muted">
-            Include your country code. We&apos;ll text you a one-time code.
-          </p>
+          <p className="mt-1.5 text-xs text-muted">{getOtpDeliveryHint()}</p>
         </div>
 
         <button
@@ -150,7 +149,7 @@ export function PhoneOtpForm({
 
       {otpSent && (
         <div className="rounded bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          Code sent to {phoneNumber}
+          Code sent to {phoneNumber} via {getOtpDeliveryLabel()}
         </div>
       )}
 
@@ -257,8 +256,8 @@ export function PhoneSecurityCard({
         <div>
           <h2 className="text-lg font-medium">Phone sign-in</h2>
           <p className="mt-1 text-sm text-muted">
-            Link a phone number to sign in with a one-time code instead of your
-            password.
+            Link a phone number to sign in with a one-time code sent via{" "}
+            {getOtpDeliveryLabel()}.
           </p>
         </div>
       </div>
